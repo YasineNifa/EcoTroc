@@ -1,4 +1,5 @@
 # EcoTroc
+
 EcoTroc is a circular marketplace that relies neither on money nor on direct barter, but on a virtual currency based on the perceived value of goods and services to facilitate local exchanges.
 
 Absolument. Voici une idée d'application web conçue pour résoudre un problème significatif, en combinant des concepts existants d'une manière nouvelle et, à ma connaissance, inexplorée.
@@ -66,7 +67,7 @@ La Confiance et la Sécurité : Un système de notation et de commentaires (pour
 En résumé, EcoTroc n'est pas juste une autre plateforme de troc. C'est un véritable écosystème économique alternatif, circulaire et local, qui transforme le gaspillage potentiel en une richesse communautaire.
 
 1. Le Problème des Sites de Troc Classiques : Le Troc Direct
-Sur un site de troc standard, le scénario est le suivant :
+   Sur un site de troc standard, le scénario est le suivant :
 
 J'ai une perceuse (A).
 
@@ -75,7 +76,7 @@ Vous avez une chaise (B).
 Pour que l'échange fonctionne, il faut que je veuille votre chaise ET que vous vouliez ma perceuse. Si l'une de ces deux conditions n'est pas remplie, l'échange est impossible. C'est la plus grande faiblesse de ces systèmes et la raison pour laquelle ils peinent à se développer : les chances de trouver cette correspondance parfaite sont très faibles.
 
 2. La Solution d'EcoTroc : Le Marché Fluide grâce au "Jeton"
-EcoTroc casse cette barrière avec sa monnaie virtuelle (le Jeton). Le scénario devient :
+   EcoTroc casse cette barrière avec sa monnaie virtuelle (le Jeton). Le scénario devient :
 
 Je donne ma perceuse à une personne C qui en a besoin. Je reçois 40 Jetons en échange. Je n'ai pas besoin de quoi que ce soit de la part de C.
 
@@ -100,9 +101,8 @@ Gagner des Jetons : C'est plus engageant. On ne "jette" pas, on "gagne" une monn
 
 En résumé, si les sites de troc sont comme des routes de campagne où l'on ne peut aller que de A à B, EcoTroc est une autoroute à plusieurs voies où la valeur circule librement dans toutes les directions. C'est cette fluidité qui résout le problème fondamental qui a freiné l'économie de l'échange jusqu'à présent.
 
-
 1. Comment un nouvel utilisateur peut avoir des jetons au début ?
-C'est un point crucial pour éviter ce qu'on appelle le "problème du démarrage à froid". Un nouvel utilisateur arrivant avec 0 Jeton pourrait se sentir découragé. Voici une stratégie en plusieurs volets pour que chaque nouvel inscrit puisse obtenir ses premiers Jetons sans avoir à attendre que son premier objet soit pris.
+   C'est un point crucial pour éviter ce qu'on appelle le "problème du démarrage à froid". Un nouvel utilisateur arrivant avec 0 Jeton pourrait se sentir découragé. Voici une stratégie en plusieurs volets pour que chaque nouvel inscrit puisse obtenir ses premiers Jetons sans avoir à attendre que son premier objet soit pris.
 
 L'objectif : Permettre à un utilisateur motivé d'accumuler rapidement ses premiers 20 à 50 Jetons pour pouvoir "goûter" au système et faire un premier "achat".
 
@@ -133,7 +133,7 @@ Un utilisateur peut inviter ses amis. Quand un ami s'inscrit ET finalise sa prem
 Résultat : Un nouvel utilisateur qui suit simplement les étapes de création de profil et met un premier objet en ligne peut facilement et rapidement se retrouver avec 50 Jetons (10+5+5+10+20) sur son compte, avant même que son objet ait trouvé preneur. Il est ainsi déjà un membre actif de l'économie.
 
 2. Comment se passe la transaction entre A et B ?
-Prenons votre exemple : La personne B est intéressée par un bien ou un service offert par la personne A. La transaction doit être simple, mais surtout sécurisée. Voici le déroulement étape par étape :
+   Prenons votre exemple : La personne B est intéressée par un bien ou un service offert par la personne A. La transaction doit être simple, mais surtout sécurisée. Voici le déroulement étape par étape :
 
 Contexte : Personne A a posté une annonce pour "Monter un meuble IKEA" pour 40 Jetons.
 
@@ -172,8 +172,6 @@ Ce système de double confirmation et de mise sous séquestre protège les deux 
 A est sûr(e) d'être payé(e) si le service est rendu correctement.
 
 B est sûr(e) de ne payer que si le service est bien rendu comme convenu.
-
-
 
 Phase 0 : Préparation et Stratégie (Avant d'écrire une ligne de code)
 C'est l'étape la plus importante pour éviter de perdre du temps et de l'argent.
@@ -281,9 +279,6 @@ Développement de l'App Mobile : C'est le moment d'investir dans l'application m
 
 Ce chemin est un marathon, pas un sprint. La clé est de commencer petit, de valider chaque étape, et de construire la plateforme en collaboration constante avec sa communauté d'utilisateurs.
 
-
-
-
 Approche 1 : Modèle "Freemium" pour les Utilisateurs
 Le principe est que l'utilisation de base reste toujours gratuite pour ne pas créer de barrière à l'entrée, mais des options payantes (en argent réel, CHF) sont proposées pour plus de confort ou de visibilité.
 
@@ -358,8 +353,236 @@ Phase 2 (Croissance) : Une fois qu'une base d'utilisateurs solide est établie, 
 
 Phase 3 (Maturité) : Développer activement les partenariats avec les entreprises, les commerces et les régies. C'est là que se trouve le potentiel de revenus le plus important et le plus aligné avec votre mission.
 
+## Authentification des Utilisateurs via l'API
 
+Gérer l'authentification (inscription, connexion, tokens) peut être complexe. Nous allons utiliser une librairie appelée Djoser qui fonctionne avec DRF pour faire 90% du travail à notre place.
 
+Ajoutez Djoser aux dépendances dans backend/requirements.txt :
 
+```txt
+# requirements.txt
+...
+python-dotenv
+djoser
+```
 
+Réinstallez les dépendances en arrêtant le serveur (Ctrl+C) et en exécutant :
 
+```bash
+docker-compose build backend
+```
+
+Configurez Djoser. Dans backend/ecotroc_api/settings.py, ajoutez djoser aux INSTALLED_APPS.
+et n'oubliez pas de rajouter `"rest_framework.authtoken",` dans les installed app sinon on aura l'erreur suivante `AttributeError at /api/auth/token/login/ type object 'Token' has no attribute 'objects'`
+
+Configurez les URLs d'authentification. Dans backend/ecotroc_api/urls.py, ajoutez les chemins pour Djoser :
+
+```python
+# backend/ecotroc_api/urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    # On ajoute les URLs de Djoser pour l'authentification
+    path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include('djoser.urls.authtoken')),
+]
+```
+
+Résultat : En redémarrant votre serveur (docker-compose up), vous disposez maintenant d'endpoints fonctionnels pour :
+
+POST /api/auth/users/ : Inscription d'un nouvel utilisateur.
+
+POST /api/auth/token/login/ : Connexion (renvoie un token d'authentification).
+
+POST /api/auth/token/logout/ : Déconnexion (nécessite le token).
+
+## Create a Profile directly ater creating a user (user signup):
+
+A signal allows certain "senders" (like the User model) to notify other parts of your application when a specific action (like being saved) has occurred. This keeps your code decoupled and clean.
+
+We will use the post_save signal, which is triggered right after a user is successfully created in the database.
+Step 1: Create a signals.py File
+It's a convention to put all signal-related logic in its own file. Create a new file named signals.py inside your core app folder.
+
+File: backend/core/signals.py
+
+```python
+from django.db.models.signals import post_save
+from django.contrib.auth.models import User
+from django.dispatch import receiver
+from .models import Profile
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    """
+    This signal is triggered after a User object is saved.
+    If the user was just created, it creates a corresponding Profile object.
+    """
+    if created:
+        Profile.objects.create(user=instance)
+```
+
+Explanation:
+
+@receiver(post_save, sender=User): This decorator registers our function create_user_profile to listen for the post_save signal specifically from the User model.
+
+instance: This is the User object that was just saved.
+
+created: This is a boolean flag. It's True only on the first save (i.e., creation), and False for all subsequent updates. This is exactly what we need to ensure the profile is created only once.
+
+Step 2: Connect the Signals
+Django needs to be made aware of your new signals.py file. The standard place to do this is in the apps.py file of your core app.
+
+File: backend/core/apps.py
+
+```python
+from django.apps import AppConfig
+
+class CoreConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'core'
+
+    def ready(self):
+        # Import signals to ensure they are connected when the app is ready.
+        import core.signals
+```
+
+By importing core.signals inside the ready() method, you ensure that your signal handlers are registered as soon as the application starts.
+
+Step 3: Update settings.py
+Finally, you need to tell Django to use this CoreConfig class for your core app instead of just the name.
+
+File: backend/ecotroc_api/settings.py
+
+```python
+# In your INSTALLED_APPS list
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken', # Make sure this is present for Djoser
+    'djoser',
+    # Replace 'core' with 'core.apps.CoreConfig'
+    'core.apps.CoreConfig',
+]
+```
+
+And that's it.
+
+Now, every time a new user signs up (whether through the Django admin or your API endpoint POST /api/auth/users/), this signal will automatically trigger and create a corresponding Profile for them, with the default starting balance of 10 Jetons you defined in the model.
+
+## how could I clean my postgres database and start with new data
+
+```bash
+docker-compose down
+docker volume ls
+docker volume rm ecotroc_postgres_data
+docker-compose up -d --build
+docker-compose run --rm backend python manage.py migrate
+docker-compose run --rm backend python manage.py createsuperuser
+```
+
+or
+
+```bash
+docker-compose down -v
+docker-compose up -d --build
+docker-compose run --rm backend python manage.py migrate
+docker-compose run --rm backend python manage.py createsuperuser
+```
+
+## viewset.ModelViewSet or viewsets.GenericViewSet:
+
+We used viewsets.GenericViewSet instead of viewsets.ModelViewSet for the TransactionViewSet because we didn't need a full set of CRUD (Create, Retrieve, Update, Delete) actions.
+
+GenericViewSet provides a minimal base, allowing us to add only the specific, custom actions we want.
+
+viewsets.ModelViewSet: The All-Inclusive Package
+Think of ModelViewSet as the "all-inclusive" option. It automatically provides a complete set of actions and generates their corresponding URLs:
+
+.list() (GET /api/transactions/)
+
+.create() (POST /api/transactions/)
+
+.retrieve() (GET /api/transactions/{id}/)
+
+.update() (PUT /api/transactions/{id}/)
+
+.destroy() (DELETE /api/transactions/{id}/)
+
+For our TransactionViewSet, these actions are unnecessary and could even be dangerous. We don't want a user to be able to create a transaction out of thin air, delete one, or see a list of all transactions on the platform. The only action we want to allow is our custom confirm action.
+
+viewsets.GenericViewSet: The Minimalist Base
+GenericViewSet is the "empty canvas." By default, it provides the basic infrastructure (like get_queryset() and get_object()) but includes no actions. It's up to you, the developer, to explicitly add the functionality you need.
+
+Since our only requirement for the TransactionViewSet was the custom @action for confirm, using GenericViewSet was the cleanest choice. We get the base functionality we need to work with the model without inheriting a lot of extra actions that we would then have to disable.
+
+A Simple Analogy: Buying a Toolbox 🧰
+ModelViewSet is like buying a pre-filled toolbox. It comes with a hammer, a screwdriver, pliers, a wrench, and more. It's great if you need most of those tools.
+
+GenericViewSet is like buying an empty toolbox. You then add only the specific tools you need for the job.
+
+For our TransactionViewSet, we only needed one very specific tool: our confirm action. It was simpler to start with an empty box and add that one tool than to buy the big toolbox and remove all the tools we didn't want.
+
+## ViewSet vs APIView
+
+We used ViewSets instead of the more basic APIView because they provide a higher level of abstraction that is perfect for resource-based APIs like ours. In short, ViewSets reduce repetitive code by automatically handling URL construction.
+
+APIView:
+Bas niveau. Vous travaillez directement avec les verbes HTTP.
+Méthodes à définir: .get(), .post(), .put(), .delete(), etc.
+Liaison aux URLs: Manuelle. Vous devez écrire chaque ligne dans urls.py.
+Cas d'usage: Endpoints très personnalisés qui ne correspondent pas à un modèle CRUD standard.
+
+ViewSet:
+Haut niveau. Vous travaillez avec des "actions" sur une ressource.
+.list(), .create(), .retrieve(), .update(), .destroy(), etc.
+Automatique. Un Router génère toutes les URLs pour vous.
+API standard basée sur des ressources (ex: Annonces, Utilisateurs, Produits).
+Exemple avec APIView
+
+```python
+# urls.py using APIView
+from django.urls import path
+from .views import ListingListView, ListingDetailView, ListingCreateView
+
+urlpatterns = [
+    path('listings/', ListingListView.as_view(), name='listing-list'),
+    path('listings/create/', ListingCreateView.as_view(), name='listing-create'),
+    path('listings/<int:pk>/', ListingDetailView.as_view(), name='listing-detail'),
+    # ... and you'd need more views and paths for update, delete, etc.
+]
+```
+
+# Alternative: JWT (JSON Web Tokens)
+
+It's worth knowing that Djoser also supports another popular method called JWT.
+
+Token Authentication (what we are using) is stateful. The server must store the token in its database.
+
+JWT is stateless. The token itself contains encrypted user data. The server can verify it without a database lookup.
+
+For most projects, and certainly for your MVP, the standard TokenAuthentication is simpler, more secure in some ways, and perfectly sufficient.
+
+## What We've Accomplished
+
+Your backend now successfully handles:
+
+User Authentication: Secure registration and login.
+
+Listings: Creating, viewing, and managing listings with images.
+
+Profiles: User profiles with avatars and non-editable Jeton balances.
+
+Transactions: A secure, two-step transaction flow with an escrow and confirmation system.
+
+Reviews: A two-way review system allowing each participant to rate a completed transaction.
+
+Messaging: A private messaging system for users to communicate about listings.
