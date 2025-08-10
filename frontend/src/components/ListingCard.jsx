@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../context/AuthContextProvider";
 
 const ListingCard = ({ listing }) => {
   // Fallback image if a listing doesn't have one
+  const { profile } = useContext(AuthContext);
+
   const imageUrl =
     listing.image || "https://via.placeholder.com/600x400.png?text=No+Image";
 
@@ -45,12 +48,15 @@ const ListingCard = ({ listing }) => {
             {listing.jeton_value} 🪙
           </span>
           <div className="flex space-x-2">
-            <button className="px-4 py-2 bg-gray-100 text-gray-800 font-semibold rounded-lg hover:bg-gray-200 transition">
-              Save
-            </button>
-            <button className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">
-              I'm Interested
-            </button>
+            {profile &&
+              listing &&
+              (profile.user.username !== listing.owner.user.username ? (
+                <button className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">
+                  I'm Interested
+                </button>
+              ) : (
+                ""
+              ))}
           </div>
         </div>
       </div>

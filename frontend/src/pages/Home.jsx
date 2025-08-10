@@ -30,13 +30,6 @@ const HomePage = () => {
     [loading, hasMore, loadMoreItems]
   ); // Dependencies now come from the hook
 
-  console.log("items", listings);
-  console.log("hasMore", hasMore);
-  console.log("loading", loading);
-  console.log("error", error);
-  console.log("observer", observer.current);
-  console.log("lastListingElementRef", lastListingElementRef);
-
   return (
     <div className="bg-gray-50 min-h-screen py-8">
       <main className="container mx-auto px-4">
