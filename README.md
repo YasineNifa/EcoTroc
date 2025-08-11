@@ -590,3 +590,201 @@ Messaging: A private messaging system for users to communicate about listings.
 # To connect to DB
 
 docker exec -it ecotroc_db_1 psql -d ecotroc_db -U ecotroc_user
+
+# To format my backend files
+
+install black
+`docker-compose run --rm backend black .`
+
+# Presentation
+
+Of course! This type of "probation day" interview is designed to test your practical skills, time management, and ability to communicate your technical decisions. Here's a breakdown to help you prepare.
+
+Good luck on Wednesday! You've got this. 🚀
+
+🗣️ Sentences for Your Presentation
+The goal here is to sound confident, structured, and thoughtful. Frame your presentation as a story of what you built, why you built it that way, and what you'd do next.
+
+Introduction & High-Level Overview
+"Good afternoon, everyone. I'm excited to walk you through the application I built today, which is a [brief, one-sentence description, e.g., a simple task management tool]."
+
+"The primary goal for today was to demonstrate a functional, end-to-end application using a modern web stack. I focused on building a solid foundation with a core feature set."
+
+"For the tech stack, I chose Django for the backend, React for the frontend, and containerized the entire application with Docker. I'll explain the reasoning behind these choices in a moment."
+
+Architecture & Technical Choices
+"I chose Django because of its 'batteries-included' philosophy, which is excellent for rapid development. The built-in ORM and admin panel allowed me to set up the data model and backend logic very quickly."
+
+"For the frontend, React was a natural choice due to its component-based architecture, which makes it easy to build a scalable and maintainable UI. I used functional components with Hooks for state management."
+
+"I used Docker and Docker Compose to orchestrate the services. This ensures a consistent development environment, simplifies dependencies, and makes the application portable and ready for deployment."
+
+"The communication between the frontend and backend is handled by a REST API I built using the Django REST Framework."
+
+Live Demonstration & Features
+"Let me show you the main user flow. The core functionality I implemented is [mention the main feature, e.g., creating a user account, logging in, and adding a new task]."
+
+"(While showing the screen) As you can see here, when a user [takes an action], the React frontend sends a request to the Django API, which then [describes the backend process] and returns the updated data."
+
+"I focused on getting this core loop working perfectly, as it's the foundation upon which all other features would be built."
+
+Challenges, Limitations, and Future Work
+This part is crucial. It shows self-awareness and that you think about the bigger picture.
+
+"Given the seven-hour time limit, I had to prioritize ruthlessly. The biggest challenge was deciding what to leave out. For instance, I implemented [feature A] but decided to postpone [feature B]."
+
+"If I had another day to work on this, my immediate next steps would be to write a comprehensive test suite, starting with unit tests for the API endpoints and integration tests for the user authentication flow."
+
+"In terms of improvements, I would [mention a specific improvement, e.g., refactor the state management with a global context, add more robust form validation on the frontend, or implement pagination for the API]."
+
+"A feature I'd be excited to add next is [mention a cool future feature, e.g., real-time updates using WebSockets or user-to-user collaboration]."
+
+🤔 Predicted Technical Questions
+They will ask questions about your specific code and your general knowledge. Be prepared to justify every decision you made.
+
+High-Level & Architectural Questions
+Why did you choose this stack? (You already answered this in the presentation, but be ready to elaborate).
+
+What were the main trade-offs you made today?
+
+Answer Strategy: Talk about speed of development vs. feature completeness. Example: "I used Django's built-in session authentication because it was faster to implement than JWT, which would be a better choice for a stateless API in a larger application."
+
+How would you deploy this application to production?
+
+Answer Strategy: Mention using a cloud provider (AWS, GCP, Azure), a managed database (like RDS), serving the React app from a CDN (like S3/Cloudfront), and running the Django app in a container orchestration service (like Kubernetes or ECS).
+
+How would you scale this application if it suddenly got 100,000 users?
+
+Answer Strategy: Talk about load balancing, using a caching layer (like Redis), optimizing database queries (select_related, prefetch_related), and potentially moving to a microservices architecture if needed.
+
+Django / Backend Questions
+Walk me through your models.py. Why did you design the schema this way?
+
+Can you explain this specific view/serializer? Why did you use a ModelViewSet instead of a generic APIView? (Or vice versa).
+
+How are you handling authentication and permissions? What's the difference between them?
+
+How did you handle Cross-Origin Resource Sharing (CORS)? (Be ready to explain that the React app runs on a different port/domain than the Django API).
+
+If you had time, how would you have tested your API endpoints? (Mention tools like pytest and Django's APIClient).
+
+React / Frontend Questions
+How are you managing state in your application? Why didn't you use a library like Redux or Zustand?
+
+Answer Strategy: "For an application of this size, useState and useContext were sufficient. Introducing Redux would have added unnecessary complexity for the current scope, but it would be a consideration as the app grows."
+
+Explain your use of the useEffect hook here. What are the dependencies and why are they important? (Be ready to explain how the dependency array prevents infinite loops).
+
+How did you structure your components? How do you ensure they are reusable?
+
+How are you handling asynchronous API calls and loading/error states?
+
+What's the difference between a controlled and an uncontrolled component in React?
+
+Docker Questions
+Can you walk me through your Dockerfile? What does each instruction do?
+
+Why did you use a multi-stage build? (If you did. If you didn't, be prepared to explain what it is and why it's a good practice for production images to reduce their size).
+
+Explain your docker-compose.yml file. How do the services communicate with each other? (Talk about the Docker network).
+
+What's the difference between COPY and ADD in a Dockerfile? What's the difference between CMD and ENTRYPOINT?
+
+## High-Level & Architectural Answers
+
+"How would you deploy this application to production?"
+
+"My strategy would be to use a cloud provider like AWS.
+
+Container Orchestration: I'd containerize the Django and React apps, push the images to a registry like Amazon ECR, and run them on AWS Fargate or ECS. This manages the containers without needing to provision servers directly.
+
+Database: I'd use a managed database service like Amazon RDS for PostgreSQL. This handles backups, scaling, and maintenance automatically.
+
+Static Files: The production build of the React app would be hosted on Amazon S3 and served globally through a CDN like Amazon CloudFront for low latency.
+
+CI/CD: I would set up a CI/CD pipeline using GitHub Actions. On every push to the main branch, it would automatically run tests, build the Docker images, and deploy the new versions."
+
+"How would you scale this application?"
+
+"Scaling would happen in a few stages.
+
+Vertical Scaling: The first, easiest step is to increase the resources (CPU/RAM) for the Fargate tasks and the RDS database instance.
+
+Horizontal Scaling: Next, I'd configure auto-scaling. I'd set up a Load Balancer and tell ECS to automatically add more instances of the Django container when CPU usage goes above a certain threshold, like 70%.
+
+Caching: To reduce database load, I'd introduce a caching layer like Redis. I would cache common, expensive database queries and user session data.
+
+Database Optimization: Beyond caching, I would set up read replicas for the PostgreSQL database, directing all read queries to them and leaving the primary database to handle only writes."
+
+"What were the main trade-offs you made today?"
+
+"The biggest trade-off was development speed versus robustness. Given the time limit, I prioritized getting a functional end-to-end feature working. For example, I used Django's built-in session authentication because it's incredibly fast to set up. In a larger, real-world project, I might have used JWT (JSON Web Tokens) for a more stateless API, but that would have taken more time to implement securely. I also postponed writing a full test suite in favor of delivering the core functionality."
+
+## Django / Backend Answers
+
+"Why did you use a ModelViewSet instead of a generic APIView here?"
+
+"I used a ModelViewSet for the [Task] API because it provides all the standard CRUD (Create, Read, Update, Delete) endpoints out-of-the-box with very little code. Since my goal was to quickly build a standard RESTful interface for the Task model, the ModelViewSet was the most efficient tool. If I needed highly custom logic that didn't map cleanly to CRUD, like a special action, I would have used a generic APIView."
+
+"How are you handling authentication and permissions?"
+
+"Authentication—proving who you are—is handled by Django's built-in session authentication system. When a user logs in, the server creates a session and sends a cookie to the client to identify them on subsequent requests.
+Authorization—determining what you're allowed to do—is handled by the Django REST Framework's permission classes. Right now, I'm using IsAuthenticated, which only allows logged-in users to access the API. If I had more time, I would have written a custom permission class, for example, to ensure a user can only view or edit their own tasks."
+
+"How did you handle CORS?"
+
+"Since the React frontend runs on a different origin (localhost:3000) than the Django backend (localhost:8000), the browser's same-origin policy would block API requests. To solve this, I installed the django-cors-headers library. In my settings.py, I configured it to allow requests specifically from my React app's origin, making it secure while enabling communication."
+
+## React / Frontend Answers
+
+"How are you managing state? Why not use Redux?"
+
+"For this application's scope, I managed state using React's built-in Hooks, primarily useState for local component state and useContext for sharing the authenticated user's data across the app.
+I intentionally avoided a library like Redux because it would have been overkill. Redux introduces boilerplate and complexity that's only justified when you have very complex, deeply nested, or large-scale global state. Here, using Hooks kept the code simpler and easier to follow, which was the right trade-off for this project."
+
+"Can you explain your use of useEffect in this component?"
+
+"Certainly. In this component, I'm using useEffect to fetch data from the backend API when the component first mounts.
+useEffect(() => { fetchData(); }, []);
+The function fetchData is called to make the API request. The key part is the empty dependency array []. This tells React to run the effect only once, right after the initial render, mimicking the componentDidMount lifecycle method. If I had included a variable in the array, the effect would re-run every time that variable changed."
+
+"How are you handling asynchronous API calls?"
+
+"I created a dedicated api.js service file to centralize my API calls. I'm using the async/await syntax with the fetch API because it makes the asynchronous code look and behave more like synchronous code, which is easier to read.
+For each call, I've wrapped it in a try...catch block. The try block handles the 'happy path'—it parses the JSON and sets the data in the state. The catch block handles any network or server errors, allowing me to set an error message in the state and display it to the user."
+
+## Docker Answers
+
+"Can you walk me through your Django Dockerfile?"
+
+"Absolutely.
+
+FROM python:3.10-slim: It starts from an official, lightweight Python base image.
+
+WORKDIR /app: It sets the working directory inside the container to /app so all subsequent commands run there.
+
+COPY requirements.txt .: It copies the dependencies list into the container.
+
+RUN pip install -r requirements.txt: It installs the Python packages. I do this before copying the rest of the code to take advantage of Docker's layer caching.
+
+COPY . .: It copies the rest of my Django project source code into the container.
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "myproject.wsgi"]: This is the default command to run when the container starts. It starts the Gunicorn web server to serve the Django application."
+
+"Why is a multi-stage build a good idea for production?"
+
+"I didn't implement it for this demo due to time, but a multi-stage build is a best practice for production. It involves using one stage with all the build tools (like compilers) to create your application artifact, and then a second, minimal stage that just copies that artifact in. The result is a much smaller and more secure final image, as it doesn't contain any build dependencies or unnecessary tools that could be a security risk."
+
+"Explain your docker-compose.yml file."
+
+"The docker-compose.yml file orchestrates the multi-container application.
+
+Services: It defines the different services that make up the app: backend (Django), frontend (React), and db (Postgres).
+
+Build/Image: For each service, it specifies how to build the image (using the build context) or which image to pull from a registry.
+
+Networking: Docker Compose automatically creates a shared network for these services. This allows the backend container to connect to the database simply by using the service name db as the hostname.
+
+Volumes: I used a volume for the PostgreSQL database (- 'postgres_data:/var/lib/postgresql/data'). This ensures that the database data persists even if the container is stopped or removed."
+
+# Walk me through your Dockerfile. docker-compose.yaml, ...

@@ -5,7 +5,7 @@ import apiClient from "../../services/api";
 import { useSnackbar } from "notistack";
 import getCommonOptions from "../../helpers/axios/gtCommonOptions";
 
-// Reusable StatusBadge component from the previous step
+// Reusable StatusBadge component (no changes needed)
 const StatusBadge = ({ status }) => {
   const styles = {
     pending: "bg-yellow-100 text-yellow-800",
@@ -23,7 +23,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-// Reusable component to display a user profile in the transaction
+// Reusable ParticipantCard component (no changes needed)
 const ParticipantCard = ({ title, profile }) => (
   <div>
     <h4 className="text-sm font-semibold text-gray-600">{title}</h4>
@@ -44,11 +44,9 @@ const ParticipantCard = ({ title, profile }) => (
 );
 
 function TransactionWindow({ transactionId }) {
-  // Get the logged-in user from context to check who can confirm
   const { user } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
 
-  // Use your hook to fetch a single transaction resource
   const {
     resource: transaction,
     getResource,
@@ -59,7 +57,6 @@ function TransactionWindow({ transactionId }) {
     resourceLabel: "Transaction",
   });
 
-  // Fetch the specific transaction whenever the ID changes
   useEffect(() => {
     if (transactionId) {
       getResource(transactionId);
@@ -74,11 +71,27 @@ function TransactionWindow({ transactionId }) {
         getCommonOptions()
       );
       enqueueSnackbar("Confirmation successful!", { variant: "success" });
-      // Refresh the transaction data to show the updated status
       getResource(transactionId);
     } catch (err) {
       const errorMsg =
         err.response?.data?.detail || "Failed to confirm transaction.";
+      enqueueSnackbar(errorMsg, { variant: "error" });
+    }
+  };
+
+  // --- NEW: Handle Cancel Action ---
+  const handleCancel = async () => {
+    try {
+      await apiClient.post(
+        `/transactions/${transactionId}/cancel/`,
+        {},
+        getCommonOptions()
+      );
+      enqueueSnackbar("Transaction cancelled.", { variant: "info" });
+      getResource(transactionId); // Refresh data to show 'cancelled' status
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.detail || "Failed to cancel transaction.";
       enqueueSnackbar(errorMsg, { variant: "error" });
     }
   };
@@ -96,17 +109,18 @@ function TransactionWindow({ transactionId }) {
   if (error) return <p className="p-4 text-red-500">{error}</p>;
   if (!transaction) return null;
 
-  // Determine if the current user can confirm this transaction
+  // --- Logic for button visibility ---
   const sellerProfile = transaction?.listing.owner;
   const buyerProfile = transaction?.buyer;
   const isUserTheBuyer = user?.profile?.id === buyerProfile.id;
   const isUserTheSeller = user?.profile?.id === sellerProfile.id;
 
-  // A user has confirmed if their flag is true
   const hasUserConfirmed =
     (isUserTheBuyer && transaction.buyer_confirmed) ||
     (isUserTheSeller && transaction.seller_confirmed);
+
   const canConfirm = transaction.status === "pending" && !hasUserConfirmed;
+  const canCancel = transaction.status === "pending"; // --- NEW: Condition to show cancel button ---
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm h-full overflow-y-auto">
@@ -157,15 +171,26 @@ function TransactionWindow({ transactionId }) {
             <ParticipantCard title="Buyer" profile={buyerProfile} />
           </div>
 
-          {/* Confirmation Button */}
-          {canConfirm && (
-            <button
-              onClick={handleConfirm}
-              className="w-full bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition"
-            >
-              Confirm Exchange
-            </button>
-          )}
+          {/* --- NEW: Action Buttons Container --- */}
+          <div className="space-y-3">
+            {canConfirm && (
+              <button
+                onClick={handleConfirm}
+                className="w-full bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition"
+              >
+                Confirm Exchange
+              </button>
+            )}
+
+            {canCancel && (
+              <button
+                onClick={handleCancel}
+                className="w-full bg-red-500 text-white font-bold py-3 rounded-lg hover:bg-red-600 transition"
+              >
+                Cancel Transaction
+              </button>
+            )}
+          </div>
 
           {transaction.status === "pending" && hasUserConfirmed && (
             <div className="text-center p-3 bg-blue-50 text-blue-700 rounded-lg">

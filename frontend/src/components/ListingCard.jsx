@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContextProvider";
-import apiClient from "../services/api";
 import { useSnackbar } from "notistack";
 
 import axios from "axios";
@@ -10,7 +9,6 @@ import formatHttpApiError from "../helpers/formatHttpApiError";
 
 const ListingCard = ({ listing }) => {
   const navigate = useNavigate();
-  // Fallback image if a listing doesn't have one
   const { profile } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -25,25 +23,10 @@ const ListingCard = ({ listing }) => {
       getCommonOptions()
     );
     const data = response.data;
-    console.log("Conversation : ", data.conversation);
     navigate(`/messages/${data.conversation.id}`);
   };
 
-  // const handleReserveClick = async (e) => {
-  //   console.log("Clicked Reserve");
-  //   e.preventDefault();
-  //   const response = await axios.post(
-  //     `http://localhost:8000/api/listings/${listing.id}/reserve/`,
-  //     {},
-  //     getCommonOptions()
-  //   );
-  //   const data = response.data;
-  //   console.log("Transaction : ", data.transaction);
-  //   navigate(`/transactions/${data.transaction.id}`);
-  // };
-
   const handleReserveClick = async (e) => {
-    console.log("Clicked Reserve");
     e.preventDefault();
     axios
       .post(
@@ -59,13 +42,12 @@ const ListingCard = ({ listing }) => {
       .catch((err) => {
         console.log(err);
         const formattedError = formatHttpApiError(err);
-        enqueueSnackbar(formattedError);
+        enqueueSnackbar(formattedError, { variant: "error" });
       });
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-6 max-w-lg mx-auto bg-white rounded-xl shadow-md">
-      {/* User Info Header */}
+    <div className="bg-white pd-6 shadow-md max-w-6xl rounded-lg border border-gray-200 mb-6 max-w-lg mx-auto">
       <div className="p-4 flex items-center">
         <img
           src={
@@ -85,14 +67,12 @@ const ListingCard = ({ listing }) => {
         </div>
       </div>
 
-      {/* Listing Image */}
       <img
         src={imageUrl}
         alt={listing?.title}
         className="w-full h-auto object-cover"
       />
 
-      {/* Listing Info & Actions */}
       <div className="p-4 pb-2">
         <h3 className="text-xl font-bold text-gray-900 mb-2">
           {listing.title}
@@ -122,20 +102,6 @@ const ListingCard = ({ listing }) => {
             ) : (
               ""
             ))}
-          {/* <div className="flex space-x-2">
-            {profile &&
-              listing &&
-              (profile.user.username !== listing.owner.user.username ? (
-                <button
-                  className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition"
-                  onClick={handleInterestedClick}
-                >
-                  I'm Interested
-                </button>
-              ) : (
-                ""
-              ))}
-          </div> */}
         </div>
       </div>
     </div>

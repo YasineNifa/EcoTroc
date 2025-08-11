@@ -8,6 +8,7 @@ class Profile(models.Model):
     jeton_balance = models.PositiveIntegerField(
         default=10
     )  # 10 jetons offertes à l'inscription
+    locked_jetons = models.PositiveIntegerField(default=0)
     bio = models.TextField(blank=True)
     image = models.ImageField(upload_to="profiles/", blank=True, null=True)
 

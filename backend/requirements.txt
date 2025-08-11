@@ -20,6 +20,7 @@ djoser
 python-dotenv
 Pillow
 drf-nested-routers
+black
 
 # Au debut
 # requirements.txt

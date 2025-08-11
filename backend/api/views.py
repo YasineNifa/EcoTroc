@@ -1,4 +1,5 @@
 from django.db import transaction as db_transaction
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, status, generics, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -14,10 +15,19 @@ from api.serializers import (
 )
 
 
+class ListingUserView(generics.ListAPIView):
+    serializer_class = ListingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["owner"]
+
+    def get_queryset(self):
+        return Listing.objects.filter(owner=self.request.user.profile)
+
+
 class ListingViewSet(viewsets.ModelViewSet):
-    queryset = Listing.objects.filter(
-        status=Listing.STATUS_AVAILABLE
-    )  # .order_by("-created_at")
+    queryset = Listing.objects.filter(status=Listing.STATUS_AVAILABLE)
     serializer_class = ListingSerializer
     permissions_class = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -48,17 +58,24 @@ class ListingViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        buyer.jeton_balance -= listing.jeton_value
-        buyer.save()
+        with db_transaction.atomic():
+            buyer.jeton_balance -= listing.jeton_value
+            buyer.locked_jetons += listing.jeton_value
+            buyer.save()
+            listing.status = Listing.STATUS_RESERVED
+            listing.save()
+            transaction = Transaction.objects.create(buyer=buyer, listing=listing)
 
-        seller = listing.owner
-        seller.jeton_balance += listing.jeton_value
-        seller.save()
+        # buyer.jeton_balance -= listing.jeton_value
+        # buyer.save()
 
-        listing.status = Listing.STATUS_RESERVED
-        listing.save()
+        # seller = listing.owner
+        # seller.jeton_balance += listing.jeton_value
+        # seller.save()
 
-        transaction = Transaction.objects.create(buyer=buyer, listing=listing)
+        # listing.status = Listing.STATUS_RESERVED
+        # listing.save()
+        # transaction = Transaction.objects.create(buyer=buyer, listing=listing)
 
         return Response(
             {
@@ -68,7 +85,9 @@ class ListingViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
         )
 
-    @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
+    @action(
+        detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated]
+    )
     def contact_seller(self, request, pk=None):
         listing = self.get_object()
         seller = listing.owner
@@ -87,7 +106,11 @@ class ListingViewSet(viewsets.ModelViewSet):
         )
         if conversation:
             return Response(
-                {"detail": "Conversation already exists.", "conversation": ConversationSerializer(conversation).data,}, status=status.HTTP_200_OK
+                {
+                    "detail": "Conversation already exists.",
+                    "conversation": ConversationSerializer(conversation).data,
+                },
+                status=status.HTTP_200_OK,
             )
 
         conversation = Conversation.objects.create(listing=listing)
@@ -112,6 +135,12 @@ class ProfileView(generics.RetrieveUpdateAPIView):
         return self.request.user.profile
 
 
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = TransactionSerializer
@@ -120,14 +149,14 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
         return Transaction.objects.filter(
             buyer=self.request.user.profile
         ) | Transaction.objects.filter(listing__owner=self.request.user.profile)
-    
+
     # def get_queryset(self):
     #     """
     #     This method filters the transactions to return only those
     #     where the logged-in user is either the buyer or the seller.
     #     """
     #     user_profile = self.request.user.profile
-        
+
     #     # Use Q objects to create an "OR" query
     #     return Transaction.objects.filter(
     #         Q(buyer=user_profile) | Q(listing__owner=user_profile)
@@ -164,7 +193,10 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
 
             # Utiliser une transaction atomique pour la sécurité du transfert
             with db_transaction.atomic():
-                buyer_profile.jeton_balance -= listing.jeton_value
+                # Already Done in the reservation
+                # buyer_profile.jeton_balance -= listing.jeton_value
+                # seller_profile.jeton_balance += listing.jeton_value
+                buyer_profile.locked_jetons -= listing.jeton_value
                 seller_profile.jeton_balance += listing.jeton_value
 
                 listing.status = Listing.STATUS_COMPLETED
@@ -184,6 +216,39 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
             {"detail": "Confirmation successful. Waiting for other confirmation."},
             status=status.HTTP_200_OK,
         )
+
+    @action(
+        detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated]
+    )
+    def cancel(self, request, pk=None):
+        transaction = self.get_object()
+        user_profile = request.user.profile
+
+        seller_profile = transaction.listing.owner
+        buyer_profile = transaction.buyer
+
+        if user_profile != seller_profile and user_profile != buyer_profile:
+            return Response(
+                {"detail": "You are not a part of this transaction."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if transaction.status != Transaction.STATUS_PENDING:
+            return Response(
+                {"detail": "Only pending transactions can be cancelled."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        with db_transaction.atomic():
+            buyer_profile.locked_jetons -= transaction.listing.jeton_value
+            buyer_profile.jeton_balance += transaction.listing.jeton_value
+            transaction.status = Transaction.STATUS_FAILED
+            transaction.listing.status = Listing.STATUS_AVAILABLE
+            transaction.save()
+            transaction.listing.save()
+            buyer_profile.save()
+
+        return Response({"detail": "Transaction cancelled."}, status=status.HTTP_200_OK)
 
     # @action(detail=True, methods=["post"])
     # def confirm_reception(self, request, pk=None):
@@ -244,17 +309,16 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
-    # permission_class = [permissions.IsAuthenticated]
+    permission_class = [permissions.IsAuthenticated]
     pagination_class = None
-    # queryset = Conversation.objects.all()
 
     def get_queryset(self):
         return Conversation.objects.filter(participants=self.request.user.profile)
 
-
     # def get_queryset(self):
     #     print("I am here : ", self.request.user)
     #     return self.request.user.profile.conversations.all()
+
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
@@ -265,18 +329,16 @@ class MessageViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Message.objects.filter(conversation=self.kwargs["conversation_pk"])
 
-    # def perform_create(self, serializer):
-    #     print("serializer : ", serializer)
-    #     serializer.save(sender=self.request.user.profile, conversation=self.kwargs["conversation_pk"]) 
-
     def perform_create(self, serializer):
-        conversation_id = self.kwargs['conversation_pk']        
+        conversation_id = self.kwargs["conversation_pk"]
         try:
             conversation_instance = Conversation.objects.get(pk=conversation_id)
         except Conversation.DoesNotExist:
             raise serializers.ValidationError("Conversation not found.")
 
-        serializer.save(sender=self.request.user.profile, conversation=conversation_instance)  
+        serializer.save(
+            sender=self.request.user.profile, conversation=conversation_instance
+        )
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

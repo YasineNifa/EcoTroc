@@ -16,8 +16,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ["id", "user", "bio", "jeton_balance", "image"]
-        read_only_fields = ["id", "user", "jeton_balance"]
+        fields = ["id", "user", "bio", "jeton_balance", "image", "locked_jetons"]
+        read_only_fields = ["id", "user", "jeton_balance", "locked_jetons"]
 
 
 class ListingSerializer(serializers.ModelSerializer):

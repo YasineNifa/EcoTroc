@@ -31,10 +31,9 @@ const HomePage = () => {
   ); // Dependencies now come from the hook
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
-      <main className="container mx-auto px-4">
+    <div className="bg-gray-50 min-h-screen">
+      <main className="container p-4 md:p-8 mx-auto max-w-6xl">
         {listings.map((listing, index) => {
-          // Attach the ref to the last element to trigger loading more
           if (listings.length === index + 1) {
             return (
               <div ref={lastListingElementRef} key={listing.id}>
@@ -46,7 +45,6 @@ const HomePage = () => {
           }
         })}
 
-        {/* The UI now reacts to the state from the hook */}
         {loading && (
           <p className="text-center text-gray-500">Loading more items...</p>
         )}

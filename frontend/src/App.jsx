@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import MessagesPage from "./pages/MessagePage";
 import TransactionPage from "./pages/TransactionPage";
 import ProfilePage from "./pages/ProfilePage";
+import Profilex from "./pages/Profilex";
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Home />} />
             {/* <Route path="/profile" element={<Profile />} /> */}
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile" element={<Profilex />} />
             <Route path="/messages" element={<MessagesPage />} />
             <Route
               path="/messages/:conversationId"

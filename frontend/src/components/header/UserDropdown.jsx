@@ -61,10 +61,10 @@ export default function UserDropdown({ user, profile }) {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            {user.username}
+            {user?.username}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            {user.email}
+            {user?.email}
           </span>
         </div>
 
