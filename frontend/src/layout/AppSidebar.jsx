@@ -3,40 +3,49 @@ import { Link, useLocation } from "react-router";
 import { FaChevronDown } from "react-icons/fa";
 import { FaBox } from "react-icons/fa";
 import { IoGridSharp } from "react-icons/io5";
+import { TiMessages } from "react-icons/ti";
 import { useSidebar } from "../context/SidebarContext";
+import { IoHomeOutline } from "react-icons/io5";
 
 const navItems = [
+  // {
+  //   icon: <IoGridSharp />,
+  //   name: "Dashboard",
+  //   subItems: [
+  //     {
+  //       name: "Electricity price chart",
+  //       path: "/electricity-price",
+  //       pro: false,
+  //     },
+  //     {
+  //       name: "Table",
+  //       path: "/table",
+  //       pro: false,
+  //     },
+  //   ],
+  // },
   {
-    icon: <IoGridSharp />,
-    name: "Dashboard",
-    subItems: [
-      {
-        name: "Electricity price chart",
-        path: "/electricity-price",
-        pro: false,
-      },
-      {
-        name: "Table",
-        path: "/table",
-        pro: false,
-      },
-    ],
+    icon: <IoHomeOutline />,
+    name: "Home",
+    path: "/",
   },
   {
-    icon: <IoGridSharp />,
-    name: "Assets",
-    subItems: [
-      {
-        name: "List Assets",
-        path: "/assets",
-        pro: false,
-      },
-      {
-        name: "Create Asset",
-        path: "/assets/create",
-        pro: false,
-      },
-    ],
+    icon: <TiMessages />,
+    name: "Messages",
+    path: "/messages",
+    pro: false,
+    // subItems: [
+    //   {
+    //     name: "List Assets",
+    //     path: "/assets",
+    //     pro: false,
+    //   },
+    //   {
+    //     name: "Create Asset",
+    //     path: "/assets/create",
+    //     pro: false,
+    //   },
+    // ],
   },
 ];
 
@@ -339,7 +348,7 @@ const AppSidebar = () => {
                   <FaBox />
                 )}
               </h2>
-              {renderMenuItems(othersItems, "others")}
+              {/* {renderMenuItems(othersItems, "others")} */}
             </div>
           </div>
         </nav>
