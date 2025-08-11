@@ -68,7 +68,7 @@ class ListingViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
         )
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
     def contact_seller(self, request, pk=None):
         listing = self.get_object()
         seller = listing.owner
@@ -87,7 +87,7 @@ class ListingViewSet(viewsets.ModelViewSet):
         )
         if conversation:
             return Response(
-                {"detail": "Conversation already exists."}, status=status.HTTP_200_OK
+                {"detail": "Conversation already exists.", "conversation": ConversationSerializer(conversation).data,}, status=status.HTTP_200_OK
             )
 
         conversation = Conversation.objects.create(listing=listing)
@@ -112,9 +112,26 @@ class ProfileView(generics.RetrieveUpdateAPIView):
         return self.request.user.profile
 
 
-class TransactionViewSet(viewsets.GenericViewSet):
-    queryset = Transaction.objects.all()
+class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        return Transaction.objects.filter(
+            buyer=self.request.user.profile
+        ) | Transaction.objects.filter(listing__owner=self.request.user.profile)
+    
+    # def get_queryset(self):
+    #     """
+    #     This method filters the transactions to return only those
+    #     where the logged-in user is either the buyer or the seller.
+    #     """
+    #     user_profile = self.request.user.profile
+        
+    #     # Use Q objects to create an "OR" query
+    #     return Transaction.objects.filter(
+    #         Q(buyer=user_profile) | Q(listing__owner=user_profile)
+    #     ).select_related('listing__owner__user', 'buyer__user').distinct().order_by('-created_at')
 
     @action(detail=True, methods=["post"])
     def confirm(self, request, pk=None):
@@ -229,10 +246,10 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     # permission_class = [permissions.IsAuthenticated]
     pagination_class = None
-    queryset = Conversation.objects.all()
+    # queryset = Conversation.objects.all()
 
-    # def get_queryset(self):
-    #     return Conversation.objects.filter(participants=self.request.user.profile)
+    def get_queryset(self):
+        return Conversation.objects.filter(participants=self.request.user.profile)
 
 
     # def get_queryset(self):

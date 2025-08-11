@@ -2,10 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { FaChevronDown } from "react-icons/fa";
 import { FaBox } from "react-icons/fa";
-import { IoGridSharp } from "react-icons/io5";
 import { TiMessages } from "react-icons/ti";
 import { useSidebar } from "../context/SidebarContext";
 import { IoHomeOutline } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
+import { GrTransaction } from "react-icons/gr";
 
 const navItems = [
   // {
@@ -47,37 +48,46 @@ const navItems = [
     //   },
     // ],
   },
+  {
+    icon: <GrTransaction />,
+    name: "Transactions",
+    path: "/transactions",
+    pro: false,
+  },
 ];
 
 const othersItems = [
   {
-    icon: <FaBox />,
-    name: "Charts",
-    subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-    ],
+    icon: <CgProfile />,
+    name: "Profile",
+    path: "/profile",
+    pro: false,
+
+    // subItems: [
+    //   { name: "Line Chart", path: "/line-chart", pro: false },
+    //   { name: "Bar Chart", path: "/bar-chart", pro: false },
+    // ],
   },
-  {
-    icon: <FaBox />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
-    ],
-  },
-  {
-    icon: <FaBox />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
-    ],
-  },
+  // {
+  //   icon: <FaBox />,
+  //   name: "UI Elements",
+  //   subItems: [
+  //     { name: "Alerts", path: "/alerts", pro: false },
+  //     { name: "Avatar", path: "/avatars", pro: false },
+  //     { name: "Badge", path: "/badge", pro: false },
+  //     { name: "Buttons", path: "/buttons", pro: false },
+  //     { name: "Images", path: "/images", pro: false },
+  //     { name: "Videos", path: "/videos", pro: false },
+  //   ],
+  // },
+  // {
+  //   icon: <FaBox />,
+  //   name: "Authentication",
+  //   subItems: [
+  //     { name: "Sign In", path: "/signin", pro: false },
+  //     { name: "Sign Up", path: "/signup", pro: false },
+  //   ],
+  // },
 ];
 
 const AppSidebar = () => {
@@ -348,7 +358,7 @@ const AppSidebar = () => {
                   <FaBox />
                 )}
               </h2>
-              {/* {renderMenuItems(othersItems, "others")} */}
+              {renderMenuItems(othersItems, "others")}
             </div>
           </div>
         </nav>

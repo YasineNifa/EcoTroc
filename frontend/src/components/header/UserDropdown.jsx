@@ -32,7 +32,7 @@ export default function UserDropdown({ user, profile }) {
         </span>
 
         <span className="block mr-1 font-medium text-theme-sm">
-          {user.username}
+          {user?.username}
         </span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${

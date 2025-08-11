@@ -7,7 +7,8 @@ import RequireAuth from "./pages/RequireAuth";
 import RequireNotAuth from "./pages/RequireNotAuth";
 import Profile from "./pages/Profile";
 import MessagesPage from "./pages/MessagePage";
-// import MessagesPage from "./pages/Profile";
+import TransactionPage from "./pages/TransactionPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -21,11 +22,17 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route element={<AppLayout />}>
             <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
+            {/* <Route path="/profile" element={<Profile />} /> */}
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/messages" element={<MessagesPage />} />
             <Route
               path="/messages/:conversationId"
               element={<MessagesPage />}
+            />
+            <Route path="/transactions" element={<TransactionPage />} />
+            <Route
+              path="/transactions/:transactionId"
+              element={<TransactionPage />}
             />
           </Route>
         </Route>

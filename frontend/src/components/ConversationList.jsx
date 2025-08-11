@@ -40,6 +40,7 @@ const ConversationList = ({
               <div className="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
                 <img
                   src={
+                    convo.listing.image ||
                     otherParticipant.profile?.image ||
                     `https://i.pravatar.cc/32?u=${otherParticipant.user.username}`
                   }
@@ -48,7 +49,7 @@ const ConversationList = ({
                 />
               </div>
               <div className="ml-2 text-sm font-semibold truncate">
-                {otherParticipant.user.username}
+                {convo.listing.title} - {otherParticipant.user.username}
               </div>
             </button>
           );
