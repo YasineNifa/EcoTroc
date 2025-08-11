@@ -1,6 +1,7 @@
 import React, { useRef, useCallback } from "react";
 import ListingCard from "../components/ListingCard";
 import useInfiniteScrollResource from "../hooks/useInfiniteScrollResource";
+import ListingSmallCard from "../components/ListingSmallCard";
 
 const HomePage = () => {
   const {
@@ -33,17 +34,21 @@ const HomePage = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <main className="container p-4 md:p-8 mx-auto max-w-6xl">
-        {listings.map((listing, index) => {
-          if (listings.length === index + 1) {
-            return (
-              <div ref={lastListingElementRef} key={listing.id}>
-                <ListingCard listing={listing} />
-              </div>
-            );
-          } else {
-            return <ListingCard key={listing.id} listing={listing} />;
-          }
-        })}
+        <h2 className="text-xl font-semibold mb-4">articles</h2>
+        {/* <div className="bg-white p-6 rounded-lg shadow-sm"> */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {listings.map((listing, index) => {
+            if (listings.length === index + 1) {
+              return (
+                <div ref={lastListingElementRef} key={listing.id}>
+                  <ListingSmallCard listing={listing} />
+                </div>
+              );
+            } else {
+              return <ListingSmallCard listing={listing} key={listing.id} />;
+            }
+          })}
+        </div>
 
         {loading && (
           <p className="text-center text-gray-500">Loading more items...</p>
@@ -54,6 +59,7 @@ const HomePage = () => {
             You've reached the end! 👋
           </p>
         )}
+        {/* </div> */}
       </main>
     </div>
   );
