@@ -35,18 +35,6 @@ const navItems = [
     name: "Messages",
     path: "/messages",
     pro: false,
-    // subItems: [
-    //   {
-    //     name: "List Assets",
-    //     path: "/assets",
-    //     pro: false,
-    //   },
-    //   {
-    //     name: "Create Asset",
-    //     path: "/assets/create",
-    //     pro: false,
-    //   },
-    // ],
   },
   {
     icon: <GrTransaction />,
@@ -62,32 +50,7 @@ const othersItems = [
     name: "Profile",
     path: "/profile",
     pro: false,
-
-    // subItems: [
-    //   { name: "Line Chart", path: "/line-chart", pro: false },
-    //   { name: "Bar Chart", path: "/bar-chart", pro: false },
-    // ],
   },
-  // {
-  //   icon: <FaBox />,
-  //   name: "UI Elements",
-  //   subItems: [
-  //     { name: "Alerts", path: "/alerts", pro: false },
-  //     { name: "Avatar", path: "/avatars", pro: false },
-  //     { name: "Badge", path: "/badge", pro: false },
-  //     { name: "Buttons", path: "/buttons", pro: false },
-  //     { name: "Images", path: "/images", pro: false },
-  //     { name: "Videos", path: "/videos", pro: false },
-  //   ],
-  // },
-  // {
-  //   icon: <FaBox />,
-  //   name: "Authentication",
-  //   subItems: [
-  //     { name: "Sign In", path: "/signin", pro: false },
-  //     { name: "Sign Up", path: "/signup", pro: false },
-  //   ],
-  // },
 ];
 
 const AppSidebar = () => {

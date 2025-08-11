@@ -28,7 +28,7 @@ class Listing(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField()
-    jeton_value = models.PositiveIntegerField()  # in jetons
+    jeton_value = models.PositiveIntegerField()
     owner = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name="listings"
     )

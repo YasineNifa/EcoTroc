@@ -11,36 +11,6 @@ function ListingSmallCard({ listing }) {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleInterestedClick = async (e) => {
-    e.preventDefault();
-    const response = await axios.post(
-      `http://localhost:8000/api/listings/${listing.id}/contact_seller/`,
-      {},
-      getCommonOptions()
-    );
-    const data = response.data;
-    navigate(`/messages/${data.conversation.id}`);
-  };
-
-  const handleReserveClick = async (e) => {
-    e.preventDefault();
-    axios
-      .post(
-        `http://localhost:8000/api/listings/${listing.id}/reserve/`,
-        {},
-        getCommonOptions()
-      )
-      .then((res) => {
-        const data = res.data;
-        console.log("Transaction : ", data.transaction);
-        navigate(`/transactions/${data.transaction.id}`);
-      })
-      .catch((err) => {
-        console.log(err);
-        const formattedError = formatHttpApiError(err);
-        enqueueSnackbar(formattedError, { variant: "error" });
-      });
-  };
   return (
     <div className="mt-8">
       <Link to={`/listings/${listing.id}`} className="group block">

@@ -1,5 +1,4 @@
 import React, { useRef, useCallback } from "react";
-import ListingCard from "../components/ListingCard";
 import useInfiniteScrollResource from "../hooks/useInfiniteScrollResource";
 import ListingSmallCard from "../components/ListingSmallCard";
 

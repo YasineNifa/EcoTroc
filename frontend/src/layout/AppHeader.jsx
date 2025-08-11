@@ -4,7 +4,6 @@ import { Link } from "react-router";
 import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import UserDropdown from "../components/header/UserDropdown";
-import useRequestAuth from "../hooks/useRequestAuth";
 import { AuthContext } from "../context/AuthContextProvider";
 // import NotificationDropdown from "../components/header/NotificationDropdown";
 

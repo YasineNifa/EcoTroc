@@ -10,6 +10,7 @@ import MessagesPage from "./pages/MessagePage";
 import TransactionPage from "./pages/TransactionPage";
 import ProfilePage from "./pages/ProfilePage";
 import Profilex from "./pages/Profilex";
+import ListingDetail from "./pages/ListingDetail";
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route element={<AppLayout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/listings/:listingId" element={<ListingDetail />} />
+
             {/* <Route path="/profile" element={<Profile />} /> */}
             <Route path="/profile" element={<Profilex />} />
             <Route path="/messages" element={<MessagesPage />} />
