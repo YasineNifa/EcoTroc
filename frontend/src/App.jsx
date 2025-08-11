@@ -6,6 +6,8 @@ import AppLayout from "./layout/AppLayout";
 import RequireAuth from "./pages/RequireAuth";
 import RequireNotAuth from "./pages/RequireNotAuth";
 import Profile from "./pages/Profile";
+import MessagesPage from "./pages/MessagePage";
+// import MessagesPage from "./pages/Profile";
 
 function App() {
   return (
@@ -20,6 +22,11 @@ function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/messages" element={<MessagesPage />} />
+            <Route
+              path="/messages/:conversationId"
+              element={<MessagesPage />}
+            />
           </Route>
         </Route>
       </Routes>

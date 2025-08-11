@@ -1,6 +1,7 @@
 import { useCallback, useState, useContext } from "react";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import apiClient from "../services/api";
 
 import formatHttpApiError from "../helpers/formatHttpApiError";
 import getCommonOptions from "../helpers/axios/gtCommonOptions";
@@ -29,10 +30,11 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
   const getResourceList = useCallback(
     ({ query = "" } = {}) => {
       setLoading(true);
-      axios
-        .get(`/api/${endpoint}/${query}`, getCommonOptions())
+      apiClient
+        .get(`/${endpoint}/${query}`, getCommonOptions())
         .then((res) => {
           setLoading(false);
+          console.log("Result : ", res.data);
           if (res.data.results) {
             setResourceList(res.data);
           } else {
@@ -49,8 +51,8 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
   const addResource = useCallback(
     (values, successCallback) => {
       setLoading(true);
-      axios
-        .post(`/api/${endpoint}/`, values, getCommonOptions())
+      apiClient
+        .post(`/${endpoint}/`, values, getCommonOptions())
         .then(() => {
           setLoading(false);
           enqueueSnackbar(`${resourceLabel} added`);
@@ -72,8 +74,8 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
   const getResource = useCallback(
     (id) => {
       setLoading(true);
-      axios
-        .get(`/api/${endpoint}/${id}/`, getCommonOptions())
+      apiClient
+        .get(`/${endpoint}/${id}/`, getCommonOptions())
         .then((res) => {
           setLoading(false);
           const { data } = res;
@@ -87,8 +89,8 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
   const updateResource = useCallback(
     (id, values, successCallback) => {
       setLoading(true);
-      axios
-        .patch(`/api/${endpoint}/${id}/`, values, getCommonOptions())
+      apiClient
+        .patch(`/${endpoint}/${id}/`, values, getCommonOptions())
         .then((res) => {
           const updated = res.data;
           const newResourceList = {
@@ -122,8 +124,8 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
   const deleteResource = useCallback(
     (id) => {
       setLoading(true);
-      axios
-        .delete(`/api/${endpoint}/${id}/`, getCommonOptions())
+      apiClient
+        .delete(`/${endpoint}/${id}/`, getCommonOptions())
         .then(() => {
           setLoading(false);
           enqueueSnackbar(`${resourceLabel} deleted`);

@@ -11,8 +11,6 @@ import { AuthContext } from "../context/AuthContextProvider";
 const AppHeader = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const { profile, user } = useContext(AuthContext);
-  console.log("profile", profile);
-
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
   const handleToggle = () => {

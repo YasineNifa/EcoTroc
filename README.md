@@ -586,3 +586,7 @@ Transactions: A secure, two-step transaction flow with an escrow and confirmatio
 Reviews: A two-way review system allowing each participant to rate a completed transaction.
 
 Messaging: A private messaging system for users to communicate about listings.
+
+# To connect to DB
+
+docker exec -it ecotroc_db_1 psql -d ecotroc_db -U ecotroc_user

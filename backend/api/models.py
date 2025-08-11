@@ -63,7 +63,7 @@ class Transaction(models.Model):
     buyer_confirmed = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Transaction for {self.listing.name}"
+        return f"Transaction for {self.listing.title}"
 
 
 class Conversation(models.Model):
@@ -74,7 +74,7 @@ class Conversation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Conversation for {self.listing.name}"
+        return f"Conversation for {self.listing.title}"
 
 
 class Message(models.Model):
@@ -115,4 +115,4 @@ class Review(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"Review for {self.transaction.listing.name} by {self.reviewer.user.username}"
+        return f"Review for {self.transaction.listing.title} by {self.reviewer.user.username}"

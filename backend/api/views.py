@@ -227,9 +227,39 @@ class TransactionViewSet(viewsets.GenericViewSet):
 
 class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
+    # permission_class = [permissions.IsAuthenticated]
+    pagination_class = None
+    queryset = Conversation.objects.all()
+
+    # def get_queryset(self):
+    #     return Conversation.objects.filter(participants=self.request.user.profile)
+
+
+    # def get_queryset(self):
+    #     print("I am here : ", self.request.user)
+    #     return self.request.user.profile.conversations.all()
+
+class MessageViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
 
     def get_queryset(self):
-        return self.request.user.profile.conversations.all()
+        return Message.objects.filter(conversation=self.kwargs["conversation_pk"])
+
+    # def perform_create(self, serializer):
+    #     print("serializer : ", serializer)
+    #     serializer.save(sender=self.request.user.profile, conversation=self.kwargs["conversation_pk"]) 
+
+    def perform_create(self, serializer):
+        conversation_id = self.kwargs['conversation_pk']        
+        try:
+            conversation_instance = Conversation.objects.get(pk=conversation_id)
+        except Conversation.DoesNotExist:
+            raise serializers.ValidationError("Conversation not found.")
+
+        serializer.save(sender=self.request.user.profile, conversation=conversation_instance)  
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

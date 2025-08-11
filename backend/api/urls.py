@@ -1,16 +1,23 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from rest_framework_nested import routers
 
-from api.views import ListingViewSet, ProfileView, TransactionViewSet, ReviewViewSet
+from api.views import ListingViewSet, ProfileView, TransactionViewSet, ReviewViewSet, ConversationViewSet, MessageViewSet
 
 
 router = DefaultRouter()
 router.register(r"listings", ListingViewSet, basename="listings")
 router.register(r"transactions", TransactionViewSet, basename="transactions")
 router.register(r"reviews", ReviewViewSet, basename="reviews")
+router.register(r"conversations", ConversationViewSet, basename="conversations")
+conversations_router = routers.NestedSimpleRouter(router, r'conversations', lookup='conversation')
+conversations_router.register(r'messages', MessageViewSet, basename='conversation-messages')
 
 
 urlpatterns = [
     path("profile/me/", ProfileView.as_view(), name="profile-me"),
+    path('', include(router.urls)),
+    # The nested router handles URLs like /api/conversations/{conversation_pk}/messages/
+    path('', include(conversations_router.urls)),
 ]
-urlpatterns += router.urls
+# urlpatterns += router.urls

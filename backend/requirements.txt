@@ -19,6 +19,7 @@ pandas
 djoser
 python-dotenv
 Pillow
+drf-nested-routers
 
 # Au debut
 # requirements.txt
