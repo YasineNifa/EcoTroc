@@ -19,9 +19,8 @@ const LayoutContent = () => {
         } ${isMobileOpen ? "ml-0" : ""}`}
       >
         <AppHeader />
-        <div className="p-4">
-          {/* max-w-(--breakpoint-2xl) */}
-          {/* mx-auto md:p-6 max-w-xl lg:max-w-3xl */}
+        <div className="p-4 bg-gray-50 min-h-screen">
+          {/* min-h-screen */}
           <Outlet />
         </div>
       </div>

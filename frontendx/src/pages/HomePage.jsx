@@ -101,7 +101,7 @@ const mockItems = [
   },
 ];
 
-const Home = () => {
+const HomePagex = () => {
   const [isSellModalOpen, setSellModalOpen] = useState(false);
   const [isRecipeModalOpen, setRecipeModalOpen] = useState(false);
   const [selectedItemTitle, setSelectedItemTitle] = useState("");
@@ -135,4 +135,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePagex;
