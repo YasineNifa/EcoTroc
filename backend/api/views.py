@@ -27,7 +27,7 @@ class ListingUserView(generics.ListAPIView):
 
 
 class ListingViewSet(viewsets.ModelViewSet):
-    queryset = Listing.objects.filter(status=Listing.STATUS_AVAILABLE)
+    queryset = Listing.objects.filter(status=Listing.Status.AVAILABLE)
     serializer_class = ListingSerializer
     permissions_class = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -46,7 +46,7 @@ class ListingViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if listing.status != Listing.STATUS_AVAILABLE:
+        if listing.status != Listing.Status.AVAILABLE:
             return Response(
                 {"detail": "This listing is not available for reservation."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -243,7 +243,7 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
             buyer_profile.locked_jetons -= transaction.listing.jeton_value
             buyer_profile.jeton_balance += transaction.listing.jeton_value
             transaction.status = Transaction.STATUS_FAILED
-            transaction.listing.status = Listing.STATUS_AVAILABLE
+            transaction.listing.status = Listing.Status.AVAILABLE
             transaction.save()
             transaction.listing.save()
             buyer_profile.save()
