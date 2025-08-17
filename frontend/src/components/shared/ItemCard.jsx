@@ -8,19 +8,19 @@ const ItemCard = ({ item, onGetRecipe }) => (
       <img
         alt={item.title}
         className="w-full h-72 object-cover cursor-pointer"
-        src={item.imageUrl}
+        src={item.image}
         onError={(e) => {
           e.target.onerror = null;
           e.target.src =
             "https://placehold.co/300x400/cccccc/4A5568?text=Image+Indisponible";
         }}
       />
-      {item.likes !== undefined && (
+      {item.number_of_likes !== undefined && (
         <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
           <Icon className="text-sm">
             <FavoriteBorderIcon />
           </Icon>{" "}
-          {item.likes}
+          {item.number_of_likes}
         </div>
       )}
     </div>
@@ -28,13 +28,8 @@ const ItemCard = ({ item, onGetRecipe }) => (
       <p className="text-xs text-gray-500">{item.brand}</p>
       <p className="text-sm text-gray-800">{item.condition}</p>
       <p className="font-bold text-lg text-teal-600 flex items-center">
-        {item.price} <Token />
+        {item.token_value} <Token />
       </p>
-      {item.serviceFee && (
-        <p className="text-xs text-gray-500">
-          +{item.serviceFee} <Token /> service
-        </p>
-      )}
       {item.category === "Maison" && (
         <button
           onClick={() => onGetRecipe(item.title)}

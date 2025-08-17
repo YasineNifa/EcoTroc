@@ -3,7 +3,8 @@ import RecipeModal from "../components/geminiPowered/RecipeModal";
 import Header from "../components/shared/Header";
 import ItemCard from "../components/shared/ItemCard";
 import NotificationBanner from "../components/shared/NotificationBanner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useRequestResource from "../hooks/useRequestResource";
 
 const mockItems = [
   {
@@ -105,11 +106,19 @@ const Home = () => {
   const [isSellModalOpen, setSellModalOpen] = useState(false);
   const [isRecipeModalOpen, setRecipeModalOpen] = useState(false);
   const [selectedItemTitle, setSelectedItemTitle] = useState("");
+  const {getResourceList, resourceList} = useRequestResource({
+    endpoint: "listings",
+    resourceLabel: "Listing",
+  })
 
   const handleGetRecipe = (itemTitle) => {
     setSelectedItemTitle(itemTitle);
     setRecipeModalOpen(true);
   };
+
+  useEffect(() => {
+    getResourceList()
+  }, [getResourceList])
 
   return (
     <div className="bg-gray-50">
@@ -117,7 +126,7 @@ const Home = () => {
       <main className="container mx-auto px-4 py-8">
         <NotificationBanner />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {mockItems.map((item) => (
+          {resourceList.results.map((item) => (
             <ItemCard key={item.id} item={item} onGetRecipe={handleGetRecipe} />
           ))}
         </div>
