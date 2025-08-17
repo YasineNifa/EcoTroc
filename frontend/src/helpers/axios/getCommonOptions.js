@@ -1,15 +1,14 @@
-function getCommonOptions() {
+function getCommonOptions(options = {}) {
+  const { isFormData = false } = options;
   const authToken = localStorage.getItem("authToken");
-
-  if (!authToken) {
-    return {};
+  const headers = {
+    "Content-Type": isFormData ? "multipart/form-data" : "application/json",
+  };
+  if (authToken) {
+    headers["Authorization"] = `Token ${authToken}`;
   }
 
-  return {
-    headers: {
-      Authorization: `Token ${authToken}`,
-    },
-  };
+  return { headers };
 }
 
 export default getCommonOptions;

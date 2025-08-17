@@ -1,5 +1,4 @@
-import { useCallback, useState, useContext } from "react";
-import axios from "axios";
+import { useCallback, useState } from "react";
 import { useSnackbar } from "notistack";
 import apiClient from "../services/api";
 
@@ -43,8 +42,9 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
 
   const addResource = useCallback(
     (values, successCallback) => {
+      const isFormData = values instanceof FormData;
       apiClient
-        .post(`/${endpoint}/`, values, getCommonOptions())
+        .post(`/${endpoint}/`, values, getCommonOptions({ isFormData }))
         .then(() => {
           enqueueSnackbar(`${resourceLabel} added`);
           if (successCallback) {
