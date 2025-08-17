@@ -1,7 +1,7 @@
 import React from "react";
 import { Formik } from "formik";
 import * as yup from "yup";
-import useRequestAuth from "../hooks/useRequestAuth";
+import useRequestAuth from "../../hooks/useRequestAuth";
 import { useNavigate } from "react-router-dom";
 
 const validationSchema = yup.object({
