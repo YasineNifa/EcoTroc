@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 
 from api.views import (
+    CategoryViewSet,
     ListingViewSet,
     ProfileView,
     TransactionViewSet,
@@ -20,6 +21,8 @@ router.register(r"transactions", TransactionViewSet, basename="transactions")
 router.register(r"reviews", ReviewViewSet, basename="reviews")
 router.register(r"profiles", ProfileViewSet, basename="profiles")
 router.register(r"conversations", ConversationViewSet, basename="conversations")
+router.register(r"categories", CategoryViewSet, basename="categories")
+
 
 conversations_router = routers.NestedSimpleRouter(
     router, r"conversations", lookup="conversation"
