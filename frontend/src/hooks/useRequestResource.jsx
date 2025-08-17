@@ -28,7 +28,6 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
       apiClient
         .get(`/${endpoint}/${query}`, getCommonOptions())
         .then((res) => {
-          console.log("Result : ", res.data);
           if (res.data.results) {
             setResourceList(res.data);
           } else {
@@ -54,12 +53,7 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
         })
         .catch(handleRequestResourceError);
     },
-    [
-      endpoint,
-      enqueueSnackbar,
-      resourceLabel,
-      handleRequestResourceError,
-    ]
+    [endpoint, enqueueSnackbar, resourceLabel, handleRequestResourceError]
   );
 
   const getResource = useCallback(
