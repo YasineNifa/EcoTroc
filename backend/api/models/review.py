@@ -1,7 +1,8 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-from api.models import Profile, Transaction
-from django.core.validators import MinValueValidator, MaxValueValidator
+from api.models.profile import Profile
+from api.models.transaction import Transaction
 
 
 class Review(models.Model):

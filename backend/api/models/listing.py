@@ -1,36 +1,7 @@
 from django.db import models
 
-from api.models import Profile
-
-
-
-
-# class Listing(models.Model):
-#     STATUS_AVAILABLE = "available"
-#     STATUS_RESERVED = "reserved"
-#     STATUS_COMPLETED = "completed"
-#     STATUS = (
-#         (STATUS_AVAILABLE, "Available"),
-#         (STATUS_RESERVED, "Reserved"),
-#         (STATUS_COMPLETED, "Completed"),
-#     )
-
-#     title = models.CharField(max_length=255)
-#     description = models.TextField()
-#     jeton_value = models.PositiveIntegerField()
-#     owner = models.ForeignKey(
-#         Profile, on_delete=models.CASCADE, related_name="listings"
-#     )
-#     status = models.CharField(max_length=20, choices=STATUS, default=STATUS_AVAILABLE)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-#     image = models.ImageField(upload_to="listings/", blank=True, null=True)
-
-#     def __str__(self):
-#         return self.title
-
-#     class Meta:
-#         ordering = ["-created_at"]
+from api.models.category import Category
+from api.models.profile import Profile
 
 
 class Listing(models.Model):
@@ -40,16 +11,6 @@ class Listing(models.Model):
         VERY_GOOD = "very_good", "Very good"
         GOOD = "good", "Good"
         SATISFACTORY = "satisfactory", "Satisfactory"
-    
-    class Category(models.TextChoices):
-        WOMEN = "women", "Women"
-        MEN = "men", "Men"
-        KIDS = "kids", "Kids"
-        HOME = "home", "Home"
-        ELECTRONICS = "electronics", "Electronics"
-        ENTERTAINMENT = "entertainment", "Entertainment"
-        HOBBIES = "hobbies", "Hobbies & collectibles"
-        SPORTS = "sports", "Sports"
 
     class Status(models.TextChoices):
         AVAILABLE = "available", "Available"
@@ -72,8 +33,12 @@ class Listing(models.Model):
     condition = models.CharField(
         max_length=50, choices=Condition.choices, default=Condition.VERY_GOOD
     )
-    category = models.CharField(
-        max_length=50, choices=Category.choices, default=Category.HOME
+    category = models.ForeignKey(
+        Category,
+        related_name='listings',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
     likes = models.ManyToManyField(Profile, related_name='liked_listings', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -87,3 +52,4 @@ class Listing(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+

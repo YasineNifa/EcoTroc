@@ -1,6 +1,7 @@
 from django.db import models
 
-from api.models import Listing, Profile
+from api.models.listing import Listing
+from api.models.profile import Profile
 
 class Conversation(models.Model):
     listing = models.ForeignKey(

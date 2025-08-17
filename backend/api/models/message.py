@@ -1,6 +1,7 @@
 from django.db import models
 
-from api.models import Profile, Conversation
+from api.models.conversation import Conversation
+from api.models.profile import Profile
 
 
 class Message(models.Model):
