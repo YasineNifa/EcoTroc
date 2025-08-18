@@ -38,7 +38,7 @@ const ItemCard = ({ item, onGetRecipe }) => {
         />
         {item.number_of_likes !== undefined && (
           <div className="absolute bottom-2 right-2 bg-white bg-opacity-50 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-            {!isOwner && (
+            {!isOwner ? (
               <button
                 onClick={handleLikeClick}
                 className="bg-white bg-opacity-40 text-black p-1.5 rounded-full flex items-center justify-center backdrop-blur-sm hover:bg-opacity-60 transition-colors"
@@ -54,6 +54,12 @@ const ItemCard = ({ item, onGetRecipe }) => {
                   <span className="ml-1 text-xs">{likesCount}</span>
                 </Icon>
               </button>
+            ) : (
+              <Icon className="!text-base transition-colors text-red-500">
+                {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+
+                <span className="ml-1 text-xs">{likesCount}</span>
+              </Icon>
             )}
           </div>
         )}
