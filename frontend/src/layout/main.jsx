@@ -5,7 +5,7 @@ import NotificationBanner from "../components/shared/NotificationBanner";
 
 function MainLayout() {
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 min-h-screen">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <Outlet />
