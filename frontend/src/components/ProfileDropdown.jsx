@@ -1,7 +1,9 @@
+import { Link } from "react-router-dom";
+
 const ProfileDropdown = ({ profile, onLogout }) => {
   console.log("Por:", profile);
   const menuItems = [
-    { label: "My Profile" },
+    { label: "My Profile", navigation: `/profile/${profile?.user?.username}` },
     { label: "Settings" },
     { label: "Personalization" },
     {
@@ -18,19 +20,15 @@ const ProfileDropdown = ({ profile, onLogout }) => {
       <ul>
         {menuItems.map((item) => (
           <li key={item.label}>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                // item.action();
-              }}
+            <Link
+              to={item.navigation}
               className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               <span>{item.label}</span>
               {item.value && (
                 <span className="text-gray-500">{item.value}</span>
               )}
-            </a>
+            </Link>
           </li>
         ))}
         <li>
