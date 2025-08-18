@@ -250,7 +250,7 @@ import FormikTextArea from "../../components/ui/FormikTextArea";
 export default function ListingForm() {
   // --- State for non-Formik values ---
   const [imagePreview, setImagePreview] = useState(null);
-  const [imageFile, setImageFile] = useState(null); // To store the actual file for submission
+  const [imageFile, setImageFile] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
 
@@ -340,7 +340,7 @@ export default function ListingForm() {
       const prompt = `Analyze this image of an item for a marketplace. Provide a short, catchy title, a detailed description, a suggested price in Tokens, the item's brand, its size (e.g., "M", "L", "One Size"), and a suggested condition from this list: "new_with_tag", "new_without_tag", "very_good", "good", "satisfactory". Return a JSON object with keys: 'title', 'description', 'price', 'brand', 'size', and 'condition'.`;
 
       try {
-        const apiKey = ""; // Canvas provides the key
+        const apiKey = "";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
         const payload = {
           contents: [
@@ -401,7 +401,10 @@ export default function ListingForm() {
                 htmlFor="photo-upload"
                 className="cursor-pointer inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700"
               >
-                <Icon className="mr-2 -ml-1">add_a_photo</Icon> Add photos
+                <Icon className="mr-2 -ml-1">
+                  <AddAPhotoIcon />
+                </Icon>{" "}
+                Add photos
               </label>
             )}
             <input
@@ -557,6 +560,19 @@ export default function ListingForm() {
         {apiError && (
           <p className="text-red-500 text-sm mb-4 text-center">{apiError}</p>
         )}
+
+        <div className="border border-gray-200 rounded-lg p-4 mb-6 flex justify-between items-center">
+          {" "}
+          <p className="text-sm text-gray-600">
+            What do you think of our new listing process?
+          </p>{" "}
+          <Button variant="secondary">Give feedback</Button>{" "}
+        </div>
+        <p className="text-xs text-gray-500 mb-6">
+          A professional seller must register as a professional on EcoTroc and
+          is subject to the sections provided in Terms 1, T&C 2, and the
+          Consumer Code.
+        </p>
 
         <div className="flex justify-end items-center space-x-4">
           <Button variant="secondary" type="button">
