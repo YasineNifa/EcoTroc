@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import Button from "../ui/Button";
 
-const ReviewsTab = ({ user, reviews }) => {
+const ReviewsTab = ({ reviews }) => {
   const [summary, setSummary] = useState("");
   const [isSummaryLoading, setSummaryLoading] = useState(false);
   const [generatedReplies, setGeneratedReplies] = useState({});
