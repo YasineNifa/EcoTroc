@@ -118,3 +118,28 @@ class ListingViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_201_CREATED,
         )
+    
+    @action(detail=True, methods=["post"])
+    def toggle_like(self, request, pk=None):
+        listing = self.get_object()
+        user_profile = request.user.profile
+        if user_profile == listing.owner:
+            Response({"detail": "You cannot like your own listing."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if user_profile in listing.likes.all():
+            listing.likes.remove(user_profile)
+            liked = False
+            status_message = "Listing unliked successfully."
+        else:
+            listing.likes.add(user_profile)
+            liked = True
+            status_message = "Listing liked successfully."
+        
+        return Response(
+            {
+                "status": status_message,
+                "liked": liked,
+                "likes_count": listing.number_of_likes()
+            },
+            status=status.HTTP_200_OK
+        )
