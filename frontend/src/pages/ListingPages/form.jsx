@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import FormSection from "../../components/ui/FormSection";
 import Icon from "../../components/ui/Icon";
-import TextArea from "../../components/ui/TextArea";
-import TextInput from "../../components/ui/TextInput";
 import Button from "../../components/ui/Button";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import useRequestResource from "../../hooks/useRequestResource";

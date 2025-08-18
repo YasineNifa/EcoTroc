@@ -3,14 +3,15 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import InboxIcon from "@mui/icons-material/Inbox";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Link } from "react-router-dom";
 
 const UserMenu = () => (
   <div className="hidden md:flex items-center space-x-6">
-    <a href="#" className="text-gray-600 hover:text-teal-600">
+    <Link to="/favorite-listings" className="text-gray-600 hover:text-teal-600">
       <Icon>
         <FavoriteBorderIcon />
       </Icon>
-    </a>
+    </Link>
     <a href="#" className="text-gray-600 hover:text-teal-600">
       <Icon>
         <InboxIcon />

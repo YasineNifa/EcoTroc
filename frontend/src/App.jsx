@@ -1,10 +1,12 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
 import RequireAuth from "./pages/AuthPages/RequireAuth";
 import RequireNotAuth from "./pages/AuthPages/RequireNotAuth";
 import RegisterPage from "./pages/AuthPages/RegisterPage";
 import SigninPage from "./pages/AuthPages/SigninPage";
 import ListingForm from "./pages/ListingPages/form";
+import FavoriteList from "./pages/ListingPages/favoriteList";
+import MainLayout from "./layout/main";
+import Listings from "./pages/ListingPages/list";
 
 function App() {
   return (
@@ -15,8 +17,11 @@ function App() {
           <Route path="/signin" element={<SigninPage />} />
         </Route>
         <Route element={<RequireAuth />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/listings/create" element={<ListingForm />} />
+          <Route element={<MainLayout />}>
+            <Route path="/" index element={<Listings />} />
+            <Route path="/listings/create" element={<ListingForm />} />
+            <Route path="/favorite-listings" element={<FavoriteList />} />
+          </Route>
         </Route>
       </Routes>
     </Router>
