@@ -8,6 +8,7 @@ import FavoriteList from "./pages/ListingPages/favoriteList";
 import MainLayout from "./layout/main";
 import Listings from "./pages/ListingPages/list";
 import ProfilePage from "./pages/ProfilePage/profile";
+import ListingDetailPage from "./pages/ListingPages/detail";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/" index element={<Listings />} />
             <Route path="/listings/create" element={<ListingForm />} />
+            <Route path="/listings/:id" element={<ListingDetailPage />} />
             <Route path="/favorite-listings" element={<FavoriteList />} />
             <Route path="/profile/:username" element={<ProfilePage />} />
           </Route>
