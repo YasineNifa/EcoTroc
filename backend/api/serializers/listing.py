@@ -14,6 +14,7 @@ class ListingSerializer(serializers.ModelSerializer):
     # Use SerializerMethodField to add custom data to the serialized output.
     # This calls the 'get_number_of_likes' method below.
     number_of_likes = serializers.SerializerMethodField()
+    is_liked = serializers.SerializerMethodField()
     
     # Use `source='get_..._display'` to get the human-readable value
     # from a 'choices' field on the model.
@@ -42,15 +43,26 @@ class ListingSerializer(serializers.ModelSerializer):
             'number_of_likes',
             'created_at',
             'updated_at',
+            'is_liked',
         ]
-        read_only_fields = ['id', 'owner', 'number_of_likes', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'owner', 'number_of_likes', 'created_at', 'updated_at', 'is_liked']
 
     def get_number_of_likes(self, obj):
         """
         Computes the number of likes for a listing.
-        'obj' is the Listing instance.
         """
         return obj.likes.count()
+    
+    def get_is_liked(self, obj):
+        """
+        Checks if the user making the request has liked the listing.
+        """
+        # The request object is passed from the view's context.
+        request = self.context.get('request')
+        if request is None or not request.user.is_authenticated:
+            return False
+        
+        return obj.likes.filter(user=request.user).exists()
 
     # def create(self, validated_data):
     #     """
