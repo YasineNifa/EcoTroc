@@ -4,12 +4,17 @@ import InboxIcon from "@mui/icons-material/Inbox";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Link } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import ProfileDropdown from "../ProfileDropdown";
+import { AuthContext } from "../../context/AuthContextProvider";
+import useRequestAuth from "../../hooks/useRequestAuth";
 
 const UserMenu = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const { profile, user } = useContext(AuthContext);
+  const { logout } = useRequestAuth();
+
   // Close dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -27,6 +32,7 @@ const UserMenu = () => {
     console.log("User logged out");
     setDropdownOpen(false);
     // Add your logout logic here
+    logout();
   };
   return (
     <div className="relative flex items-center space-x-4" ref={dropdownRef}>
@@ -55,55 +61,26 @@ const UserMenu = () => {
         <img
           alt="Avatar de l'utilisateur"
           className="w-8 h-8 rounded-full"
-          src="https://placehold.co/40x40/E2E8F0/4A5568?text=User"
+          src={
+            profile?.image
+              ? profile.image
+              : `https://placehold.co/40x40/E2E8F0/4A5568?text=${user?.username}`
+          }
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = "https://placehold.co/40x40/E2E8F0/4A5568?text=User";
+            e.target.src = profile?.image
+              ? profile.image
+              : `https://placehold.co/40x40/E2E8F0/4A5568?text=${user?.username}`;
           }}
         />
         <Icon className="text-gray-600">
           <ExpandMoreIcon />
         </Icon>
-        {isDropdownOpen && <ProfileDropdown onLogout={handleLogout} />}
+        {isDropdownOpen && (
+          <ProfileDropdown profile={profile} onLogout={handleLogout} />
+        )}
       </div>
     </div>
-
-    // <div className="relative flex items-center space-x-4" ref={dropdownRef}>
-    //   <a href="#" className="text-gray-600 hover:text-teal-600 hidden sm:block">
-    //     <Icon>inbox</Icon>
-    //   </a>
-    //   <a
-    //     href="#"
-    //     className="text-red-500 hover:text-red-700 hidden sm:block relative"
-    //   >
-    //     <Icon>notifications</Icon>
-    //     <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-    //       1
-    //     </span>
-    //   </a>
-    //   <button
-    //     onClick={() => onNavigate("liked")}
-    //     className="text-gray-600 hover:text-teal-600 hidden sm:block"
-    //   >
-    //     <Icon>favorite_border</Icon>
-    //   </button>
-
-    //   <div
-    //     className="flex items-center space-x-1 cursor-pointer"
-    //     onClick={() => setDropdownOpen(!isDropdownOpen)}
-    //   >
-    //     <img
-    //       alt="User Avatar"
-    //       className="w-8 h-8 rounded-full"
-    //       src="https://placehold.co/40x40/E2E8F0/4A5568?text=U"
-    //     />
-    //     <Icon className="text-base text-gray-600">expand_more</Icon>
-    //   </div>
-
-    //   {isDropdownOpen && (
-    //     <ProfileDropdown onNavigate={onNavigate} onLogout={handleLogout} />
-    //   )}
-    // </div>
   );
 };
 

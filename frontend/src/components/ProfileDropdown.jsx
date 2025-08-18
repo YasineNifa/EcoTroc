@@ -1,11 +1,12 @@
-const ProfileDropdown = ({ onLogout }) => {
+const ProfileDropdown = ({ profile, onLogout }) => {
+  console.log("Por:", profile);
   const menuItems = [
     { label: "My Profile" },
     { label: "Settings" },
     { label: "Personalization" },
     {
       label: "My Wallet",
-      value: "0.00 Tokens",
+      value: `${profile?.jeton_balance} tokens`,
     },
     { label: "My Orders" },
     { label: "Donations" },
