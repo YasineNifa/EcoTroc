@@ -4,6 +4,7 @@ from rest_framework import viewsets, permissions, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from api.filters.listing import ListingFilter
 from api.models import Listing, Transaction, Conversation
 from api.serializers import ListingSerializer, TransactionSerializer, ConversationSerializer
 
@@ -24,6 +25,10 @@ class ListingViewSet(viewsets.ModelViewSet):
     queryset = Listing.objects.filter(status=Listing.Status.AVAILABLE)
     serializer_class = ListingSerializer
     permissions_class = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ListingFilter
+
+    
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user.profile)
@@ -143,3 +148,9 @@ class ListingViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+    
+    @action(detail=False, methods=["get"])
+    def liked(self, request):
+        liked_listings = self.get_queryset().filter(likes=request.user.profile)
+        serializer = self.get_serializer(liked_listings, many=True)
+        return Response(serializer.data)
