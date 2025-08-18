@@ -125,6 +125,21 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
     ]
   );
 
+  const toggleLike = useCallback(
+    (id, successCallback) => {
+      apiClient
+        .post(`/${endpoint}/${id}/toggle_like/`, {}, getCommonOptions())
+        .then((res) => {
+          enqueueSnackbar("Like status updated!");
+          if (successCallback) {
+            successCallback(res.data);
+          }
+        })
+        .catch(handleRequestResourceError);
+    },
+    [endpoint, enqueueSnackbar, handleRequestResourceError]
+  );
+
   return {
     resourceList,
     getResourceList,
@@ -134,5 +149,6 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
     updateResource,
     deleteResource,
     error,
+    toggleLike,
   };
 }
