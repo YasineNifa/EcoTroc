@@ -143,3 +143,9 @@ class ListingViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+    
+    @action(detail=False, methods=["get"])
+    def liked(self, request):
+        liked_listings = self.get_queryset().filter(likes=request.user.profile)
+        serializer = self.get_serializer(liked_listings, many=True)
+        return Response(serializer.data)
