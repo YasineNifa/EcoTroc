@@ -1,7 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router";
 import Header from "../components/shared/Header";
-import NotificationBanner from "../components/shared/NotificationBanner";
 
 function MainLayout() {
   return (
