@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.filters.listing import ListingFilter
-from api.models import Listing, Transaction, Conversation
+from api.models import Listing, Transaction, Conversation, Message, Proposition
 from api.serializers import ListingSerializer, TransactionSerializer, ConversationSerializer
 
 
@@ -154,3 +154,60 @@ class ListingViewSet(viewsets.ModelViewSet):
         liked_listings = self.get_queryset().filter(likes=request.user.profile)
         serializer = self.get_serializer(liked_listings, many=True)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=["post"])
+    def make_offer(self, request, pk=None):
+        listing = self.get_object()
+        user_profile = request.user.profile
+        offer_amount = request.data.get("offer_amount")
+        print(request.data)
+
+        if user_profile == listing.owner:
+            return Response({"detail": "You cannot make an offer on your own listing."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if offer_amount <= 0:
+            return Response({"detail": "Offer amount must be greater than zero."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if user_profile.jeton_balance < offer_amount:
+            return Response({"detail": "Insufficient jeton balance."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if listing.status != Listing.Status.AVAILABLE:
+            return Response({"detail": "This listing is not available for offers."}, status=status.HTTP_400_BAD_REQUEST)
+
+        #TODO: Create/use the existing conversation between the seller and the buyer for the listing
+        # and send a message in this conversation to the owner to suggest a price and inside the message,
+        # we should add three action, accept, refuse or propose onther offer to the buyer        
+        conversation = (
+            Conversation.objects.filter(listing=listing, participants=listing.owner)
+            .filter(participants=user_profile)
+            .first()
+        )
+        if not conversation:
+            conversation = Conversation.objects.create(listing=listing)
+            conversation.participants.add(user_profile, listing.owner)
+
+        # Create a message for the offer
+        message_content = f"{user_profile.user.username} has made an offer of {offer_amount} tokens for your item '{listing.title}'."
+        # You might want to store the offer details in the message or a related model
+        # For now, just sending the message
+
+        Message.objects.create(
+            conversation=conversation,
+            sender=user_profile,
+            content=message_content,
+        )
+        Proposition.objects.create(
+            listing=listing,
+            buyer=user_profile,
+            amount=offer_amount,
+            status=Proposition.Status.PENDING
+        )
+
+
+
+
+        return Response(
+            {"detail": "Offer sent successfully.", "conversation_id": conversation.id},
+            status=status.HTTP_200_OK,
+        )
+        
