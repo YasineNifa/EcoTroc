@@ -44,11 +44,11 @@ const UserMenu = () => {
           <FavoriteBorderIcon />
         </Icon>
       </Link>
-      <a href="#" className="text-gray-600 hover:text-teal-600">
+      <Link to="/messages" className="text-gray-600 hover:text-teal-600">
         <Icon>
           <InboxIcon />
         </Icon>
-      </a>
+      </Link>
       <a href="#" className="text-gray-600 hover:text-teal-600">
         <Icon>
           <NotificationsNoneIcon />

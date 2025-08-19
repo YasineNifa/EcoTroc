@@ -9,6 +9,7 @@ import MainLayout from "./layout/main";
 import Listings from "./pages/ListingPages/list";
 import ProfilePage from "./pages/ProfilePage/profile";
 import ListingDetailPage from "./pages/ListingPages/detail";
+import MessagesPage from "./pages/MessagePages/Message";
 
 function App() {
   return (
@@ -25,6 +26,11 @@ function App() {
             <Route path="/listings/:id" element={<ListingDetailPage />} />
             <Route path="/favorite-listings" element={<FavoriteList />} />
             <Route path="/profile/:username" element={<ProfilePage />} />
+            <Route path="/messages" element={<MessagesPage />} />
+            <Route
+              path="/messages/:conversationId"
+              element={<MessagesPage />}
+            />
           </Route>
         </Route>
       </Routes>
