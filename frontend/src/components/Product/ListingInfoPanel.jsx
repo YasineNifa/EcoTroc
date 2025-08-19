@@ -5,7 +5,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const ListingInfoPanel = ({ listing, onAskAI }) => {
+const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer }) => {
   const navigate = useNavigate();
   const details = [
     { label: "Marque", value: listing?.brand },
@@ -53,7 +53,9 @@ const ListingInfoPanel = ({ listing, onAskAI }) => {
       </Button>
       <div className="space-y-3 mt-6">
         <Button variant="primary">Buy</Button>
-        <Button variant="secondary">Make an offer</Button>
+        <Button variant="secondary" onClick={onMakeOffer}>
+          Make an offer
+        </Button>
         <Button variant="secondary" onClick={handleMessageClick}>
           Message
         </Button>

@@ -5,9 +5,11 @@ import ListingInfoPanel from "../../components/Product/ListingInfoPanel";
 import MoreFromSeller from "../../components/Product/MoreFromSeller";
 import useRequestResource from "../../hooks/useRequestResource";
 import { useParams } from "react-router-dom";
+import MakeOfferModal from "../../components/Product/MakeOfferModal";
 
 const ListingDetailPage = () => {
   const [isAiModalOpen, setAiModalOpen] = useState(false);
+  const [isOfferModalOpen, setOfferModalOpen] = useState(false);
   const { id } = useParams();
   const { resource, getResource } = useRequestResource({
     endpoint: "listings",
@@ -30,6 +32,7 @@ const ListingDetailPage = () => {
           />
           <ListingInfoPanel
             listing={resource}
+            onMakeOffer={() => setOfferModalOpen(true)}
             onAskAI={() => setAiModalOpen(true)}
           />
         </div>
@@ -43,6 +46,11 @@ const ListingDetailPage = () => {
         isOpen={isAiModalOpen}
         onClose={() => setAiModalOpen(false)}
         listing={resource}
+      />
+      <MakeOfferModal
+        isOpen={isOfferModalOpen}
+        onClose={() => setOfferModalOpen(false)}
+        item={resource}
       />
     </div>
   );
