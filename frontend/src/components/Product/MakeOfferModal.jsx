@@ -1,9 +1,13 @@
 import { useState } from "react";
 import Modal from "../ui/Modal";
 import Button from "../ui/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import getCommonOptions from "../../helpers/axios/getCommonOptions";
 
 // --- "Make an Offer" Modal ---
 const MakeOfferModal = ({ isOpen, onClose, item }) => {
+  const navigate = useNavigate();
   console.log("Item : ", item);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [customPrice, setCustomPrice] = useState("");
@@ -22,11 +26,25 @@ const MakeOfferModal = ({ isOpen, onClose, item }) => {
     setSelectedOffer("custom");
   };
 
-  const handlePropose = () => {
+  const handlePropose = async (e) => {
+    e.preventDefault();
     const offerPrice = selectedOffer === "custom" ? customPrice : selectedOffer;
     if (offerPrice) {
+      const values = {
+        offer_amount: Number(offerPrice),
+      };
       console.log(`Offer proposed: ${offerPrice} token`);
       onClose();
+      const response = await axios.post(
+        `http://localhost:8000/api/listings/${item.id}/make_offer/`,
+        values,
+        getCommonOptions()
+      );
+      const data = response.data;
+      if (data.conversation_id) {
+        onClose();
+        navigate(`/messages/${data.conversation_id}`);
+      }
     } else {
       alert("Please select or enter an offer.");
     }
@@ -88,7 +106,7 @@ const MakeOfferModal = ({ isOpen, onClose, item }) => {
         </div>
       )}
       <Button onClick={handlePropose} variant="primary" className="w-full mt-4">
-        Proposer
+        Propose
       </Button>
     </Modal>
   );
