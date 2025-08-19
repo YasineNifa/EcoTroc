@@ -1,8 +1,12 @@
+import getCommonOptions from "../../helpers/axios/getCommonOptions";
 import Button from "../ui/Button";
 import Icon from "../ui/Icon";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ListingInfoPanel = ({ listing, onAskAI }) => {
+  const navigate = useNavigate();
   const details = [
     { label: "Marque", value: listing?.brand },
     { label: "Taille", value: listing?.size },
@@ -10,6 +14,17 @@ const ListingInfoPanel = ({ listing, onAskAI }) => {
     { label: "Couleur", value: listing?.color },
     { label: "Ajouté", value: listing?.uploadedAgo },
   ];
+
+  const handleMessageClick = async (e) => {
+    e.preventDefault();
+    const response = await axios.post(
+      `http://localhost:8000/api/listings/${listing.id}/contact_seller/`,
+      {},
+      getCommonOptions()
+    );
+    const data = response.data;
+    navigate(`/messages/${data.conversation.id}`);
+  };
   return (
     <div className="w-full lg:w-5/12 lg:pl-10">
       <div className="text-sm text-gray-500 mb-4">
@@ -37,9 +52,11 @@ const ListingInfoPanel = ({ listing, onAskAI }) => {
         ✨ Ask AI a question about this item
       </Button>
       <div className="space-y-3 mt-6">
-        <Button variant="primary">Acheter</Button>
-        <Button variant="secondary">Faire une offre</Button>
-        <Button variant="secondary">Message</Button>
+        <Button variant="primary">Buy</Button>
+        <Button variant="secondary">Make an offer</Button>
+        <Button variant="secondary" onClick={handleMessageClick}>
+          Message
+        </Button>
       </div>
       <div className="mt-6 p-4 bg-gray-50 rounded-md text-sm">
         <div className="flex items-start gap-3">
