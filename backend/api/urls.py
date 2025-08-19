@@ -11,6 +11,7 @@ from api.views import (
     ConversationViewSet,
     MessageViewSet,
     ProfileViewSet,
+    PropositionViewSet,
     ListingUserView,
 )
 
@@ -22,6 +23,7 @@ router.register(r"reviews", ReviewViewSet, basename="reviews")
 router.register(r"profiles", ProfileViewSet, basename="profiles")
 router.register(r"conversations", ConversationViewSet, basename="conversations")
 router.register(r"categories", CategoryViewSet, basename="categories")
+router.register(r'propositions', PropositionViewSet, basename='proposition')
 
 
 conversations_router = routers.NestedSimpleRouter(
