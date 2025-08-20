@@ -5,6 +5,15 @@ from api.models.profile import Profile
 
 
 class Message(models.Model):
+    class MessageType(models.TextChoices):
+        TEXT = "text", "Text"
+        OFFER = "offer", "Offer"
+
+    message_type = models.CharField(
+        max_length=10,
+        choices=MessageType.choices,
+        default=MessageType.TEXT
+    )
     conversation = models.ForeignKey(
         Conversation, on_delete=models.CASCADE, related_name="messages"
     )
