@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
 
+from api.filters import PropositionFilter
 from api.models import Proposition, Message, Conversation
 from api.serializers import PropositionSerializer
 
@@ -16,6 +17,7 @@ class PropositionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Proposition.objects.all()
     serializer_class = PropositionSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_class = PropositionFilter
 
     def get_queryset(self):
         """
