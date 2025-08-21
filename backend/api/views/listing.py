@@ -51,31 +51,31 @@ class ListingViewSet(viewsets.ModelViewSet):
                 {"detail": "This listing is not available for reservation."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+        accepted_proposition = Proposition.objects.filter(
+            listing=listing,
+            buyer=buyer,
+            status=Proposition.Status.ACCEPTED
+        ).order_by('-created_at').first()
 
-        if buyer.jeton_balance < listing.jeton_value:
+        if accepted_proposition:
+            transaction_amount = accepted_proposition.amount
+        else:
+            transaction_amount = listing.token_value
+
+        if buyer.jeton_balance < transaction_amount:
             return Response(
                 {"detail": "Insufficient jetons balance."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         with db_transaction.atomic():
-            buyer.jeton_balance -= listing.jeton_value
-            buyer.locked_jetons += listing.jeton_value
+            buyer.jeton_balance -= transaction_amount
+            buyer.locked_jetons += transaction_amount
             buyer.save()
-            listing.status = Listing.STATUS_RESERVED
+            listing.status = Listing.Status.RESERVED
             listing.save()
             transaction = Transaction.objects.create(buyer=buyer, listing=listing)
-
-        # buyer.jeton_balance -= listing.jeton_value
-        # buyer.save()
-
-        # seller = listing.owner
-        # seller.jeton_balance += listing.jeton_value
-        # seller.save()
-
-        # listing.status = Listing.STATUS_RESERVED
-        # listing.save()
-        # transaction = Transaction.objects.create(buyer=buyer, listing=listing)
 
         return Response(
             {
