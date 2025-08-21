@@ -12,8 +12,11 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import BuyerProtectionPolicy from "./BuyerProtectionPolicy";
 import BuyerInfo from "./BuyerInfos";
+import { useSnackbar } from "notistack";
+import apiClient from "../../services/api";
 
 const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer, finalPrice }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const details = [
@@ -32,6 +35,21 @@ const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer, finalPrice }) => {
     );
     const data = response.data;
     navigate(`/messages/${data.conversation.id}`);
+  };
+
+  const handleBuyClick = async () => {
+    try {
+      const response = await apiClient.post(
+        `/listings/${listing.id}/reserve/`,
+        getCommonOptions()
+      );
+      enqueueSnackbar(response.data.detail, { variant: "success" });
+      // Redirect to the transactions page so the user can see the new pending transaction
+      navigate("/transactions");
+    } catch (err) {
+      const errorMsg = err.response?.data?.detail || "Failed to buy the item.";
+      enqueueSnackbar(errorMsg, { variant: "error" });
+    }
   };
 
   if (!user) return null;
@@ -90,7 +108,7 @@ const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer, finalPrice }) => {
       </Button>
       {user?.username !== listing?.owner?.user?.username ? (
         <BlockThreeButtons
-          onPrimary={() => {}}
+          onPrimary={handleBuyClick}
           onSecondary={onMakeOffer}
           onThird={handleMessageClick}
           primaryText="Buy"
