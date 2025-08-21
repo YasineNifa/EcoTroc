@@ -20,7 +20,7 @@ const ConversationList = ({
     return convo.participants.find((p) => p.user.username !== user.username);
   };
 
-  if (!user) return null; // Don't render if user data isn't loaded yet
+  if (!user) return null;
   return (
     <div className="flex flex-col mt-8">
       <div className="flex flex-col space-y-1 -mx-2 h-full overflow-y-auto">
