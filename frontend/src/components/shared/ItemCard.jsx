@@ -39,12 +39,13 @@ const ItemCard = ({ item, onGetRecipe }) => {
         />
 
         {!isAvailable && (
-          <div className="absolute top-0 left-0 w-full bg-green-600 py-1 text-center z-10">
+          <div className="absolute bottom-0 left-0 w-full bg-green-600 py-1 text-center z-10">
             <span className="text-white text-xs font-bold uppercase tracking-widest">
               {item.status === "completed" ? "Sold" : "Reserved"}
             </span>
           </div>
         )}
+
         {item.number_of_likes !== undefined && isAvailable && (
           <div className="absolute bottom-2 right-2 bg-white bg-opacity-50 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
             {!isOwner ? (

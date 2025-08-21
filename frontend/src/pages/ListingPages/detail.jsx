@@ -43,13 +43,15 @@ const ListingDetailPage = () => {
   }, [id]);
 
   return (
-    <div className="border border-gray-200 rounded-md p-4 shadow-sm">
+    <div className="">
       <div className="mx-auto">
         <div className="flex justify-around flex-col lg:flex-row w-auto">
           <div className="p-4 rounded-md w-[650px] h-[450px]">
             <ListingImageGallery
               imageUrl={resource?.image}
+              status={resource?.status}
               title={resource?.title}
+              isAvailable={resource?.status === "available"}
             />
           </div>
           {pageIsLoading ? (

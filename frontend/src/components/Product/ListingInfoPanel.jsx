@@ -107,14 +107,18 @@ const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer, finalPrice }) => {
         ✨ Ask AI a question about this item
       </Button>
       {user?.username !== listing?.owner?.user?.username ? (
-        <BlockThreeButtons
-          onPrimary={handleBuyClick}
-          onSecondary={onMakeOffer}
-          onThird={handleMessageClick}
-          primaryText="Buy"
-          secondaryText="Make an offre"
-          thirdText="Message"
-        />
+        listing?.status === "available" ? (
+          <BlockThreeButtons
+            onPrimary={handleBuyClick}
+            onSecondary={onMakeOffer}
+            onThird={handleMessageClick}
+            primaryText="Buy"
+            secondaryText="Make an offre"
+            thirdText="Message"
+          />
+        ) : (
+          <></>
+        )
       ) : (
         <BlockThreeButtons
           onPrimary={() => {}}
