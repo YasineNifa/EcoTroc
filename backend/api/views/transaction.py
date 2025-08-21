@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from api.models import Listing, Transaction
+from api.models import Listing, Transaction, Proposition
 from api.serializers import TransactionSerializer
 
 
@@ -57,15 +57,25 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
             buyer_profile = transaction.buyer
             listing = transaction.listing
 
+            # 1. Find the last accepted proposition for this buyer and listing
+            accepted_proposition = Proposition.objects.filter(
+                listing=listing,
+                buyer=buyer_profile,
+                status=Proposition.Status.ACCEPTED
+            ).order_by('-created_at').first()
+
+            # 2. Determine the final transaction amount
+            if accepted_proposition:
+                transaction_amount = accepted_proposition.amount
+            else:
+                transaction_amount = listing.token_value
+
             # Utiliser une transaction atomique pour la sécurité du transfert
             with db_transaction.atomic():
-                # Already Done in the reservation
-                # buyer_profile.jeton_balance -= listing.jeton_value
-                # seller_profile.jeton_balance += listing.jeton_value
-                buyer_profile.locked_jetons -= listing.jeton_value
-                seller_profile.jeton_balance += listing.jeton_value
+                buyer_profile.locked_jetons -= transaction_amount
+                seller_profile.jeton_balance += transaction_amount
 
-                listing.status = Listing.STATUS_COMPLETED
+                listing.status = Listing.Status.COMPLETED
                 transaction.status = Transaction.STATUS_COMPLETED
 
                 buyer_profile.save()

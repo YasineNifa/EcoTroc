@@ -1,4 +1,5 @@
 from django.db import transaction as db_transaction
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.decorators import action
@@ -6,7 +7,7 @@ from rest_framework.response import Response
 
 from api.filters.listing import ListingFilter
 from api.models import Listing, Transaction, Conversation, Message, Proposition
-from api.serializers import ListingSerializer, TransactionSerializer, ConversationSerializer
+from api.serializers import ListingSerializer, TransactionSerializer, ConversationSerializer, PropositionSerializer
 
 
 class ListingUserView(generics.ListAPIView):
@@ -50,31 +51,31 @@ class ListingViewSet(viewsets.ModelViewSet):
                 {"detail": "This listing is not available for reservation."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+        accepted_proposition = Proposition.objects.filter(
+            listing=listing,
+            buyer=buyer,
+            status=Proposition.Status.ACCEPTED
+        ).order_by('-created_at').first()
 
-        if buyer.jeton_balance < listing.jeton_value:
+        if accepted_proposition:
+            transaction_amount = accepted_proposition.amount
+        else:
+            transaction_amount = listing.token_value
+
+        if buyer.jeton_balance < transaction_amount:
             return Response(
                 {"detail": "Insufficient jetons balance."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         with db_transaction.atomic():
-            buyer.jeton_balance -= listing.jeton_value
-            buyer.locked_jetons += listing.jeton_value
+            buyer.jeton_balance -= transaction_amount
+            buyer.locked_jetons += transaction_amount
             buyer.save()
-            listing.status = Listing.STATUS_RESERVED
+            listing.status = Listing.Status.RESERVED
             listing.save()
             transaction = Transaction.objects.create(buyer=buyer, listing=listing)
-
-        # buyer.jeton_balance -= listing.jeton_value
-        # buyer.save()
-
-        # seller = listing.owner
-        # seller.jeton_balance += listing.jeton_value
-        # seller.save()
-
-        # listing.status = Listing.STATUS_RESERVED
-        # listing.save()
-        # transaction = Transaction.objects.create(buyer=buyer, listing=listing)
 
         return Response(
             {
@@ -174,9 +175,6 @@ class ListingViewSet(viewsets.ModelViewSet):
         if listing.status != Listing.Status.AVAILABLE:
             return Response({"detail": "This listing is not available for offers."}, status=status.HTTP_400_BAD_REQUEST)
 
-        #TODO: Create/use the existing conversation between the seller and the buyer for the listing
-        # and send a message in this conversation to the owner to suggest a price and inside the message,
-        # we should add three action, accept, refuse or propose onther offer to the buyer        
         conversation = (
             Conversation.objects.filter(listing=listing, participants=listing.owner)
             .filter(participants=user_profile)
@@ -186,28 +184,44 @@ class ListingViewSet(viewsets.ModelViewSet):
             conversation = Conversation.objects.create(listing=listing)
             conversation.participants.add(user_profile, listing.owner)
 
-        # Create a message for the offer
         message_content = f"{user_profile.user.username} has made an offer of {offer_amount} tokens for your item '{listing.title}'."
-        # You might want to store the offer details in the message or a related model
-        # For now, just sending the message
 
-        Message.objects.create(
-            conversation=conversation,
-            sender=user_profile,
-            content=message_content,
-        )
-        Proposition.objects.create(
+        proposition = Proposition.objects.create(
             listing=listing,
             buyer=user_profile,
             amount=offer_amount,
             status=Proposition.Status.PENDING
         )
-
-
-
+        Message.objects.create(
+            conversation=conversation,
+            sender=user_profile,
+            content=message_content,
+            message_type=Message.MessageType.OFFER,
+            proposition=proposition
+        )
 
         return Response(
             {"detail": "Offer sent successfully.", "conversation_id": conversation.id},
             status=status.HTTP_200_OK,
         )
-        
+    
+    @action(detail=True, methods=['get'])
+    def last_accepted_proposition(self, request, pk=None):
+        """
+        Returns the last accepted proposition for this listing,
+        if the current user was a participant.
+        """
+        listing = self.get_object()
+        user_profile = request.user.profile
+
+        proposition = Proposition.objects.filter(
+            Q(buyer=user_profile) | Q(listing__owner=user_profile),
+            listing=listing,
+            status=Proposition.Status.ACCEPTED
+        ).order_by('-created_at').first()
+
+        if proposition:
+            serializer = PropositionSerializer(proposition)
+            return Response(serializer.data)
+        else:
+            return Response({"detail": "No accepted proposition found."}, status=status.HTTP_404_NOT_FOUND)

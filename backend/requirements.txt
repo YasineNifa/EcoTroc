@@ -21,6 +21,9 @@ djoser
 python-dotenv
 Pillow
 drf-nested-routers
+#Setting up Django Channels
+channels
+channels-redis
 
 
 

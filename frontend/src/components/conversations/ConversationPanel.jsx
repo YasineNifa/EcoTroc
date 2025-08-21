@@ -36,7 +36,7 @@ const ConversationPanel = ({ conversationId }) => {
       .join("\n");
     const prompt = `Summarize the following conversation concisely:\n\n${conversationText}`;
     try {
-      const apiKey = ""; // Canvas provides the key
+      const apiKey = "";
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
       const payload = { contents: [{ parts: [{ text: prompt }] }] };
       const response = await fetch(apiUrl, {
@@ -114,9 +114,9 @@ const ConversationPanel = ({ conversationId }) => {
 
   return (
     <>
-      <div className="flex-1 flex flex-col h-full bg-white">
-        <div className="p-3 border-b flex justify-between items-center">
-          <div className="flex items-center gap-2">
+      <div className="flex-1 flex flex-col h-full">
+        <div className="p-3 flex justify-between items-center border-b border-gray-500">
+          <div className="flex items-center gap-2 h-5">
             <button
               onClick={() => {
                 setSummaryModalOpen(true);
@@ -135,7 +135,7 @@ const ConversationPanel = ({ conversationId }) => {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+        <div className="flex-1 p-4 overflow-y-auto rounded-lg">
           {resourceList.results.map((msg) => (
             <MessageContainer key={msg.id} msg={msg} user={user} />
           ))}

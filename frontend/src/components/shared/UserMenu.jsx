@@ -8,6 +8,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import ProfileDropdown from "../ProfileDropdown";
 import { AuthContext } from "../../context/AuthContextProvider";
 import useRequestAuth from "../../hooks/useRequestAuth";
+import NotificationBell from "../notifications/NotificationBell";
 
 const UserMenu = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -29,9 +30,7 @@ const UserMenu = () => {
   }, []);
 
   const handleLogout = () => {
-    console.log("User logged out");
     setDropdownOpen(false);
-    // Add your logout logic here
     logout();
   };
   return (
@@ -51,7 +50,8 @@ const UserMenu = () => {
       </Link>
       <a href="#" className="text-gray-600 hover:text-teal-600">
         <Icon>
-          <NotificationsNoneIcon />
+          {/* <NotificationsNoneIcon /> */}
+          <NotificationBell />
         </Icon>
       </a>
       <div

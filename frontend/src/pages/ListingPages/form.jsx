@@ -7,6 +7,8 @@ import useRequestResource from "../../hooks/useRequestResource";
 import { useFormik } from "formik";
 import FormikTextInput from "../../components/ui/FormikTextInput";
 import FormikTextArea from "../../components/ui/FormikTextArea";
+import { useNavigate } from "react-router-dom";
+import Token from "../../components/ui/Token";
 
 // export default function ListingForm() {
 //   const [formData, setFormData] = useState({
@@ -251,6 +253,7 @@ export default function ListingForm() {
   const [imageFile, setImageFile] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
+  const navigate = useNavigate();
 
   // --- API Hooks ---
   const { addResource, error: apiError } = useRequestResource({
@@ -299,11 +302,11 @@ export default function ListingForm() {
       }
 
       addResource(formData, () => {
-        console.log("Listing added successfully!");
         formik.resetForm();
         setImagePreview(null);
         setImageFile(null);
         setSubmitting(false);
+        navigate("/");
       });
     },
   });
@@ -544,7 +547,7 @@ export default function ListingForm() {
                 className="p-2 border-b border-gray-300 focus:border-teal-500 focus:outline-none w-full"
               />
               <span className="absolute right-2 top-2 text-gray-500">
-                Tokens
+                <Token />
               </span>
               {formik.touched.token_value && formik.errors.token_value ? (
                 <div className="text-red-500 text-xs mt-1">

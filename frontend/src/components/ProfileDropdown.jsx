@@ -1,16 +1,17 @@
 import { Link } from "react-router-dom";
+import Token from "./ui/Token";
 
 const ProfileDropdown = ({ profile, onLogout }) => {
-  console.log("Por:", profile);
   const menuItems = [
-    { label: "My Profile", navigation: `/profile/${profile?.user?.username}` },
+    { label: "My Profile", navigation: `/profiles/${profile?.user?.id}` },
     { label: "Settings" },
     { label: "Personalization" },
     {
       label: "My Wallet",
-      value: `${profile?.jeton_balance} tokens`,
+      value: `${profile?.jeton_balance}`,
     },
     { label: "My Orders" },
+    { label: "My Transactions", navigation: "/transactions" },
     { label: "Donations" },
     { label: "Invite Friends" },
   ];
@@ -26,7 +27,9 @@ const ProfileDropdown = ({ profile, onLogout }) => {
             >
               <span>{item.label}</span>
               {item.value && (
-                <span className="text-gray-500">{item.value}</span>
+                <span className="text-gray-500">
+                  {item.value} <Token />
+                </span>
               )}
             </Link>
           </li>

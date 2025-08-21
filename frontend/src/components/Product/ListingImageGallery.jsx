@@ -1,11 +1,10 @@
 const ListingImageGallery = ({ imageUrl, title }) => (
-  <div className="w-full lg:w-7/12">
-    {" "}
+  <div className="lg:w-9/12 flex justify-center">
     <img
       src={imageUrl}
       alt={title}
-      className="w-full h-auto object-cover rounded-sm"
-    />{" "}
+      // className="w-150 h-100 object-cover rounded-sm"
+    />
   </div>
 );
 

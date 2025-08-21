@@ -4,6 +4,7 @@ from api.models import (
     Conversation,
     Listing,
     Message,
+    Notification,
     Profile,
     Proposition,
     Review,
@@ -15,6 +16,7 @@ admin.site.register(Category)
 admin.site.register(Conversation)
 admin.site.register(Listing)
 admin.site.register(Message)
+admin.site.register(Notification)
 admin.site.register(Profile)
 admin.site.register(Proposition)
 admin.site.register(Review)

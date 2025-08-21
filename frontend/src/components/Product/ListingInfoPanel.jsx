@@ -1,18 +1,29 @@
 import getCommonOptions from "../../helpers/axios/getCommonOptions";
+import TimeAgo from "../conversations/TimeAgo";
 import Button from "../ui/Button";
 import Icon from "../ui/Icon";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Token from "../ui/Token";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContextProvider";
+import BlockThreeButtons from "../propositions/BlockThreeButtons";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import BuyerProtectionPolicy from "./BuyerProtectionPolicy";
+import BuyerInfo from "./BuyerInfos";
+import { useSnackbar } from "notistack";
+import apiClient from "../../services/api";
 
-const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer }) => {
+const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer, finalPrice }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const details = [
     { label: "Marque", value: listing?.brand },
-    { label: "Taille", value: listing?.size },
-    { label: "État", value: listing?.condition },
-    { label: "Couleur", value: listing?.color },
-    { label: "Ajouté", value: listing?.uploadedAgo },
+    { label: "Size", value: listing?.size },
+    { label: "State", value: listing?.condition_display },
+    { label: "Color", value: listing?.color },
   ];
 
   const handleMessageClick = async (e) => {
@@ -25,16 +36,60 @@ const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer }) => {
     const data = response.data;
     navigate(`/messages/${data.conversation.id}`);
   };
+
+  const handleBuyClick = async () => {
+    try {
+      const response = await apiClient.post(
+        `/listings/${listing.id}/reserve/`,
+        getCommonOptions()
+      );
+      enqueueSnackbar(response.data.detail, { variant: "success" });
+      // Redirect to the transactions page so the user can see the new pending transaction
+      navigate("/transactions");
+    } catch (err) {
+      const errorMsg = err.response?.data?.detail || "Failed to buy the item.";
+      enqueueSnackbar(errorMsg, { variant: "error" });
+    }
+  };
+
+  if (!user) return null;
   return (
-    <div className="w-full lg:w-5/12 lg:pl-10">
-      <div className="text-sm text-gray-500 mb-4">
-        <span>{listing?.views} vues</span> |
-        <span>{listing?.number_of_likes} favoris</span>
+    <div className="w-full lg:w-3/12 border border-gray-200 rounded-md p-4 shadow-sm">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">{listing?.title}</h1>
+        <div className="flex justify-between text-sm mb-2">
+          <TimeAgo date={listing?.created_at} />
+        </div>
       </div>
-      <h1 className="text-2xl font-bold">{listing?.title}</h1>
-      <p className="text-lg text-gray-800 my-2">
-        {listing?.token_value.toFixed(2)} Token
-      </p>
+      {finalPrice ? (
+        <div className="flex items-baseline gap-2">
+          <p className="text-xl font-bold">
+            {finalPrice}
+            <Token />
+          </p>
+          <p className="text-md text-gray-400 line-through">
+            {listing?.token_value} <Token />
+          </p>
+        </div>
+      ) : (
+        <p className="text-lg text-gray-800">
+          {listing?.token_value}
+          <Token />
+        </p>
+      )}
+      <span className="mr-1 text-gray-500">
+        {listing?.views || 0}
+        <Icon className="text-teal-600 ml-1">
+          <VisibilityIcon />
+        </Icon>
+      </span>
+      |
+      <span className="ml-1 text-gray-500">
+        {listing?.number_of_likes}
+        <Icon className="text-teal-600 ml-1">
+          <FavoriteIcon />
+        </Icon>
+      </span>
       <hr className="my-4" />
       {details.map((detail) => (
         <div key={detail.label} className="flex justify-between text-sm mb-2">
@@ -51,52 +106,30 @@ const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer }) => {
       >
         ✨ Ask AI a question about this item
       </Button>
-      <div className="space-y-3 mt-6">
-        <Button variant="primary">Buy</Button>
-        <Button variant="secondary" onClick={onMakeOffer}>
-          Make an offer
-        </Button>
-        <Button variant="secondary" onClick={handleMessageClick}>
-          Message
-        </Button>
-      </div>
+      {user?.username !== listing?.owner?.user?.username ? (
+        <BlockThreeButtons
+          onPrimary={handleBuyClick}
+          onSecondary={onMakeOffer}
+          onThird={handleMessageClick}
+          primaryText="Buy"
+          secondaryText="Make an offre"
+          thirdText="Message"
+        />
+      ) : (
+        <BlockThreeButtons
+          onPrimary={() => {}}
+          onSecondary={() => {}}
+          onThird={() => {}}
+          primaryText="Edit"
+          secondaryText="Delete"
+          thirdText="Mark as Unavailable"
+        />
+      )}
       <div className="mt-6 p-4 bg-gray-50 rounded-md text-sm">
-        <div className="flex items-start gap-3">
-          <Icon className="text-teal-600">shield</Icon>
-          <div>
-            <h3 className="font-bold">Frais de Protection acheteurs</h3>
-            <p className="text-xs text-gray-600 mt-1">
-              Pour tout achat effectué par le biais du bouton "Acheter", des
-              frais de service seront ajoutés.
-              <a href="#" className="text-teal-600 font-semibold ml-1">
-                Politique de Protection acheteurs
-              </a>
-            </p>
-          </div>
-        </div>
+        <BuyerProtectionPolicy />
       </div>
       <div className="mt-6">
-        <div className="flex justify-between items-center cursor-pointer p-2 -ml-2 rounded-md hover:bg-gray-100">
-          <div className="flex items-center gap-3">
-            <img
-              src={listing?.owner.image}
-              alt={listing?.owner.username}
-              className="w-10 h-10 rounded-full"
-            />
-            <div>
-              <p className="font-bold text-sm">{listing?.owner.username}</p>
-              <div className="flex items-center text-xs text-gray-500">
-                <Icon className="!text-sm text-yellow-500">star</Icon>
-                <span className="ml-1">
-                  {listing?.owner.rating} ({listing?.owner.reviewsCount} avis)
-                </span>
-              </div>
-            </div>
-          </div>
-          <Icon>
-            <ChevronRightIcon />
-          </Icon>
-        </div>
+        <BuyerInfo profile={listing?.owner} />
       </div>
     </div>
   );
