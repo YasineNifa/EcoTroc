@@ -17,21 +17,13 @@ function ConversationList({ activeConversationId, setActiveConversationId }) {
     return convo.participants.find((p) => p.user.username !== user.username);
   };
 
-  if (!user) return null; // Don't render if user data isn't loaded yet
+  if (!user) return null;
   return (
-    <div className="w-1/3 border-r overflow-y-auto flex-shrink-0">
-      <div className="p-3 border-b">
-        <h2 className="font-bold">Messages</h2>
+    <>
+      <div className="p-3 border-b border-gray-500">
+        <h2 className="font-bold h-5">Messages</h2>
       </div>
       <div>
-        {/* {mockConversations.map((convo) => (
-          <ConversationListItem
-            key={convo.id}
-            conversation={convo}
-            isActive={convo.id === activeConversationId}
-            onClick={() => setActiveConversationId(convo.id)}
-          />
-        ))} */}
         {resourceList.results.map((convo) => {
           const otherParticipant = getOtherParticipant(convo);
           if (!otherParticipant) return null;
@@ -47,7 +39,7 @@ function ConversationList({ activeConversationId, setActiveConversationId }) {
           );
         })}
       </div>
-    </div>
+    </>
   );
 }
 
