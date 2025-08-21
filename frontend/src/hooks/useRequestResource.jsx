@@ -18,7 +18,7 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
     (err) => {
       const formattedError = formatHttpApiError(err);
       setError(formattedError);
-      enqueueSnackbar(formattedError);
+      enqueueSnackbar(formattedError, { variant: "error" });
       setLoading(false);
     },
     [enqueueSnackbar, setError]
@@ -54,7 +54,7 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
         .then(() => {
           setLoading(false);
           setError(null);
-          enqueueSnackbar(`${resourceLabel} added`);
+          enqueueSnackbar(`${resourceLabel} added`, { variant: "success" });
           if (successCallback) {
             successCallback();
           }
@@ -83,8 +83,9 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
   const updateResource = useCallback(
     (id, values, successCallback) => {
       setLoading(true);
+      const isFormData = values instanceof FormData;
       apiClient
-        .patch(`/${endpoint}/${id}/`, values, getCommonOptions())
+        .patch(`/${endpoint}/${id}/`, values, getCommonOptions({ isFormData }))
         .then((res) => {
           setLoading(false);
           setError(null);
@@ -99,7 +100,7 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
             count: resourceList.count,
           };
           setResourceList(newResourceList);
-          enqueueSnackbar(`${resourceLabel} updated`);
+          enqueueSnackbar(`${resourceLabel} updated`, { variant: "success" });
           if (successCallback) {
             successCallback();
           }
@@ -123,7 +124,7 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
         .then(() => {
           setLoading(false);
           setError(null);
-          enqueueSnackbar(`${resourceLabel} deleted`);
+          enqueueSnackbar(`${resourceLabel} deleted`, { variant: "success" });
           const newResourceList = {
             results: resourceList.results.filter((r) => {
               return r.id !== id;
@@ -150,7 +151,7 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
         .then((res) => {
           setLoading(false);
           setError(null);
-          enqueueSnackbar("Like status updated!");
+          enqueueSnackbar("Like status updated!", { variant: "success" });
           if (successCallback) {
             successCallback(res.data);
           }

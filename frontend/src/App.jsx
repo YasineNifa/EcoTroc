@@ -24,6 +24,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/" index element={<Listings />} />
             <Route path="/listings/create" element={<ListingForm />} />
+            <Route path="/listings/:id/edit" element={<ListingForm />} />
             <Route path="/listings/:id" element={<ListingDetailPage />} />
             <Route path="/favorite-listings" element={<FavoriteList />} />
             <Route path="/messages" element={<MessagesPage />} />

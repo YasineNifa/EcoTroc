@@ -36,6 +36,7 @@ class ListingSerializer(serializers.ModelSerializer):
             'condition',
             'condition_display',
             'category_display',
+            'category',
             'status_display',
             'status',
             'image',

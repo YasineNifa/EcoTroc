@@ -52,6 +52,10 @@ const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer, finalPrice }) => {
     }
   };
 
+  const handleEdit = () => {
+    navigate(`/listings/${listing.id}/edit`);
+  };
+
   if (!user) return null;
   return (
     <div className="w-full lg:w-3/12 border border-gray-200 rounded-md p-4 shadow-sm">
@@ -121,7 +125,7 @@ const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer, finalPrice }) => {
         )
       ) : (
         <BlockThreeButtons
-          onPrimary={() => {}}
+          onPrimary={handleEdit}
           onSecondary={() => {}}
           onThird={() => {}}
           primaryText="Edit"
