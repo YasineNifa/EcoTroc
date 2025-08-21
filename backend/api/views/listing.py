@@ -1,4 +1,5 @@
 from django.db import transaction as db_transaction
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.decorators import action
@@ -6,7 +7,7 @@ from rest_framework.response import Response
 
 from api.filters.listing import ListingFilter
 from api.models import Listing, Transaction, Conversation, Message, Proposition
-from api.serializers import ListingSerializer, TransactionSerializer, ConversationSerializer
+from api.serializers import ListingSerializer, TransactionSerializer, ConversationSerializer, PropositionSerializer
 
 
 class ListingUserView(generics.ListAPIView):
@@ -199,11 +200,28 @@ class ListingViewSet(viewsets.ModelViewSet):
             proposition=proposition
         )
 
-
-
-
         return Response(
             {"detail": "Offer sent successfully.", "conversation_id": conversation.id},
             status=status.HTTP_200_OK,
         )
-        
+    
+    @action(detail=True, methods=['get'])
+    def last_accepted_proposition(self, request, pk=None):
+        """
+        Returns the last accepted proposition for this listing,
+        if the current user was a participant.
+        """
+        listing = self.get_object()
+        user_profile = request.user.profile
+
+        proposition = Proposition.objects.filter(
+            Q(buyer=user_profile) | Q(listing__owner=user_profile),
+            listing=listing,
+            status=Proposition.Status.ACCEPTED
+        ).order_by('-created_at').first()
+
+        if proposition:
+            serializer = PropositionSerializer(proposition)
+            return Response(serializer.data)
+        else:
+            return Response({"detail": "No accepted proposition found."}, status=status.HTTP_404_NOT_FOUND)
