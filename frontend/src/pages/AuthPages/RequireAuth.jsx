@@ -1,17 +1,18 @@
 import React, { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContextProvider";
+import Loading from "../../components/Loading";
 
 export default function RequireAuth() {
-  const context = useContext(AuthContext);
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
 
-  // if (context.isAuthenticated === null) {
-  //   return <div>Loading RequireAuth...</div>;
-  // }
-
-  if (context.isAuthenticated === true) {
-    return <Outlet />;
+  if (isLoading) {
+    return <Loading />;
   }
 
-  return <Navigate to="/signin" />;
+  if (!isAuthenticated) {
+    return <Navigate to="/signin" />;
+  }
+
+  return <Outlet />;
 }

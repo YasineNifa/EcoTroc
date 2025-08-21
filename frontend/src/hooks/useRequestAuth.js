@@ -15,7 +15,6 @@ export default function useRequestAuth() {
 
   const handleRequestError = useCallback(
     (err) => {
-      console.log(err);
       const formattedError = formatHttpApiError(err);
       setError(formattedError);
       enqueueSnackbar(formattedError);

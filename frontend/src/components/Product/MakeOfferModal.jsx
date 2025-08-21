@@ -32,7 +32,6 @@ const MakeOfferModal = ({ isOpen, onClose, item }) => {
       const values = {
         offer_amount: Number(offerPrice),
       };
-      console.log(`Offer proposed: ${offerPrice} token`);
       onClose();
       const response = await axios.post(
         `http://localhost:8000/api/listings/${item.id}/make_offer/`,

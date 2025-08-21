@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
 const ProfileDropdown = ({ profile, onLogout }) => {
-  console.log("Por:", profile);
   const menuItems = [
     { label: "My Profile", navigation: `/profile/${profile?.user?.username}` },
     { label: "Settings" },
