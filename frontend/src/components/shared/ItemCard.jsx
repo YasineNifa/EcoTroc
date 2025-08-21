@@ -67,7 +67,7 @@ const ItemCard = ({ item, onGetRecipe }) => {
       <div className="p-3">
         <h1 className="text-lg font-semibold mb-1">{item.title}</h1>
         <p className="text-xs text-gray-500">{item.brand}</p>
-        <p className="text-sm text-gray-800">{item.condition}</p>
+        <p className="text-sm text-gray-800">{item.condition_display}</p>
         <p className="font-bold text-lg text-teal-600 flex items-center">
           {item.token_value} <Token />
         </p>
