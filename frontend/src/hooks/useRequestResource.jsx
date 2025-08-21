@@ -12,21 +12,26 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
   const [resource, setResource] = useState(null);
   const [error, setError] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setLoading] = useState(false);
 
   const handleRequestResourceError = useCallback(
     (err) => {
       const formattedError = formatHttpApiError(err);
       setError(formattedError);
       enqueueSnackbar(formattedError);
+      setLoading(false);
     },
     [enqueueSnackbar, setError]
   );
 
   const getResourceList = useCallback(
     ({ query = "" } = {}) => {
+      setLoading(true);
       apiClient
         .get(`/${endpoint}/${query}`, getCommonOptions())
         .then((res) => {
+          setLoading(false);
+          setError(null);
           if (res.data.results) {
             setResourceList(res.data);
           } else {
@@ -42,10 +47,13 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
 
   const addResource = useCallback(
     (values, successCallback) => {
+      setLoading(true);
       const isFormData = values instanceof FormData;
       apiClient
         .post(`/${endpoint}/`, values, getCommonOptions({ isFormData }))
         .then(() => {
+          setLoading(false);
+          setError(null);
           enqueueSnackbar(`${resourceLabel} added`);
           if (successCallback) {
             successCallback();
@@ -58,11 +66,14 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
 
   const getResource = useCallback(
     (id) => {
+      setLoading(true);
       apiClient
         .get(`/${endpoint}/${id}/`, getCommonOptions())
         .then((res) => {
           const { data } = res;
           setResource(data);
+          setLoading(false);
+          setError(null);
         })
         .catch(handleRequestResourceError);
     },
@@ -71,9 +82,12 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
 
   const updateResource = useCallback(
     (id, values, successCallback) => {
+      setLoading(true);
       apiClient
         .patch(`/${endpoint}/${id}/`, values, getCommonOptions())
         .then((res) => {
+          setLoading(false);
+          setError(null);
           const updated = res.data;
           const newResourceList = {
             results: resourceList.results.map((r) => {
@@ -103,9 +117,12 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
 
   const deleteResource = useCallback(
     (id) => {
+      setLoading(true);
       apiClient
         .delete(`/${endpoint}/${id}/`, getCommonOptions())
         .then(() => {
+          setLoading(false);
+          setError(null);
           enqueueSnackbar(`${resourceLabel} deleted`);
           const newResourceList = {
             results: resourceList.results.filter((r) => {
@@ -127,9 +144,12 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
 
   const toggleLike = useCallback(
     (id, successCallback) => {
+      setLoading(true);
       apiClient
         .post(`/${endpoint}/${id}/toggle_like/`, {}, getCommonOptions())
         .then((res) => {
+          setLoading(false);
+          setError(null);
           enqueueSnackbar("Like status updated!");
           if (successCallback) {
             successCallback(res.data);
@@ -150,5 +170,6 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
     deleteResource,
     error,
     toggleLike,
+    isLoading,
   };
 }
