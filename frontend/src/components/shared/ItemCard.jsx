@@ -28,7 +28,7 @@ const ItemCard = ({ item, onGetRecipe }) => {
       <div className="relative">
         <img
           alt={item.title}
-          className="w-full h-72 object-cover cursor-pointer"
+          className="w-full h-82 object-cover cursor-pointer"
           src={item.image}
           onError={(e) => {
             e.target.onerror = null;
