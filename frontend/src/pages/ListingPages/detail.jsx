@@ -6,12 +6,14 @@ import MoreFromSeller from "../../components/Product/MoreFromSeller";
 import useRequestResource from "../../hooks/useRequestResource";
 import { useParams } from "react-router-dom";
 import MakeOfferModal from "../../components/Product/MakeOfferModal";
+import ListingInfoPanelSkeleton from "../../components/Product/ListingInfotPanelSkeleton";
 
 const ListingDetailPage = () => {
   const [isAiModalOpen, setAiModalOpen] = useState(false);
   const [isOfferModalOpen, setOfferModalOpen] = useState(false);
+
   const { id } = useParams();
-  const { resource, getResource } = useRequestResource({
+  const { resource, getResource, isLoading } = useRequestResource({
     endpoint: "listings",
     resourceLabel: "Listing",
   });
@@ -21,18 +23,22 @@ const ListingDetailPage = () => {
   }, [getResource, id]);
 
   return (
-    <div className="bg-white">
+    <div className="">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row">
+        <div className="flex flex-col lg:flex-row w-auto">
           <ListingImageGallery
             imageUrl={resource?.image}
             title={resource?.title}
           />
-          <ListingInfoPanel
-            listing={resource}
-            onMakeOffer={() => setOfferModalOpen(true)}
-            onAskAI={() => setAiModalOpen(true)}
-          />
+          {isLoading ? (
+            <ListingInfoPanelSkeleton />
+          ) : (
+            <ListingInfoPanel
+              listing={resource}
+              onMakeOffer={() => setOfferModalOpen(true)}
+              onAskAI={() => setAiModalOpen(true)}
+            />
+          )}
         </div>
         {/* <MoreFromSeller
           items={resource?.otherItems}
