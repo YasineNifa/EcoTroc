@@ -43,13 +43,15 @@ const ListingDetailPage = () => {
   }, [id]);
 
   return (
-    <div className="">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row w-auto">
-          <ListingImageGallery
-            imageUrl={resource?.image}
-            title={resource?.title}
-          />
+    <div className="border border-gray-200 rounded-md p-4 shadow-sm">
+      <div className="mx-auto">
+        <div className="flex justify-around flex-col lg:flex-row w-auto">
+          <div className="p-4 rounded-md w-[650px] h-[450px]">
+            <ListingImageGallery
+              imageUrl={resource?.image}
+              title={resource?.title}
+            />
+          </div>
           {pageIsLoading ? (
             <ListingInfoPanelSkeleton />
           ) : (

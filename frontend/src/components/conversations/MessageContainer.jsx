@@ -3,12 +3,13 @@ import NormalMessage from "./NormalMessage";
 import OfferMessage from "./OfferMessage";
 import apiClient from "../../services/api";
 import { useSnackbar } from "notistack";
+import getCommonOptions from "../../helpers/axios/getCommonOptions";
 
 function MessageContainer({ msg, user }) {
   const { enqueueSnackbar } = useSnackbar();
   const handleAccept = (propositionId) => {
     apiClient
-      .post(`/propositions/${propositionId}/accept/`)
+      .post(`/propositions/${propositionId}/accept/`, getCommonOptions())
       .then(() => {
         enqueueSnackbar("Offer accepted!", { variant: "success" });
         if (onActionSuccess) onActionSuccess(); // Callback to refresh the message list
@@ -22,7 +23,7 @@ function MessageContainer({ msg, user }) {
 
   const handleRefuse = (propositionId) => {
     apiClient
-      .post(`/propositions/${propositionId}/reject/`)
+      .post(`/propositions/${propositionId}/reject/`, getCommonOptions())
       .then(() => {
         enqueueSnackbar("Offer rejected.", { variant: "info" });
         if (onActionSuccess) onActionSuccess();

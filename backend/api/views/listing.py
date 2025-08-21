@@ -23,7 +23,7 @@ class ListingUserView(generics.ListAPIView):
 
 
 class ListingViewSet(viewsets.ModelViewSet):
-    queryset = Listing.objects.filter(status=Listing.Status.AVAILABLE)
+    queryset = Listing.objects.all()
     serializer_class = ListingSerializer
     permissions_class = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend]
@@ -215,7 +215,7 @@ class ListingViewSet(viewsets.ModelViewSet):
         user_profile = request.user.profile
 
         proposition = Proposition.objects.filter(
-            Q(buyer=user_profile) | Q(listing__owner=user_profile),
+            Q(buyer=user_profile),
             listing=listing,
             status=Proposition.Status.ACCEPTED
         ).order_by('-created_at').first()

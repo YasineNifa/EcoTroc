@@ -8,7 +8,7 @@ class ListingFilter(filters.FilterSet):
 
     class Meta:
         model = Listing
-        fields = ['category', 'brand', 'liked_by_user', 'owner']
+        fields = ['category', 'brand', 'liked_by_user', 'owner', 'status']
 
     def filter_liked_by_user(self, queryset, name, value):
         """
