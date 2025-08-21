@@ -13,7 +13,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import BuyerProtectionPolicy from "./BuyerProtectionPolicy";
 import BuyerInfo from "./BuyerInfos";
 
-const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer }) => {
+const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer, finalPrice }) => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const details = [
@@ -43,10 +43,22 @@ const ListingInfoPanel = ({ listing, onAskAI, onMakeOffer }) => {
           <TimeAgo date={listing?.created_at} />
         </div>
       </div>
-      <p className="text-lg text-gray-800">
-        {listing?.token_value}
-        <Token />
-      </p>
+      {finalPrice ? (
+        <div className="flex items-baseline gap-2">
+          <p className="text-xl font-bold">
+            {finalPrice}
+            <Token />
+          </p>
+          <p className="text-md text-gray-400 line-through">
+            {listing?.token_value} <Token />
+          </p>
+        </div>
+      ) : (
+        <p className="text-lg text-gray-800">
+          {listing?.token_value}
+          <Token />
+        </p>
+      )}
       <span className="mr-1 text-gray-500">
         {listing?.views || 0}
         <Icon className="text-teal-600 ml-1">
