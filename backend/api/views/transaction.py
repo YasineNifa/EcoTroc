@@ -75,7 +75,7 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
                 buyer_profile.locked_jetons -= transaction_amount
                 seller_profile.jeton_balance += transaction_amount
 
-                listing.status = Listing.STATUS_COMPLETED
+                listing.status = Listing.Status.COMPLETED
                 transaction.status = Transaction.STATUS_COMPLETED
 
                 buyer_profile.save()
