@@ -299,7 +299,6 @@ export default function ListingForm() {
       }
 
       addResource(formData, () => {
-        console.log("Listing added successfully!");
         formik.resetForm();
         setImagePreview(null);
         setImageFile(null);

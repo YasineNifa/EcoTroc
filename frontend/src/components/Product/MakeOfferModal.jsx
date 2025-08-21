@@ -8,7 +8,6 @@ import getCommonOptions from "../../helpers/axios/getCommonOptions";
 // --- "Make an Offer" Modal ---
 const MakeOfferModal = ({ isOpen, onClose, item }) => {
   const navigate = useNavigate();
-  console.log("Item : ", item);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [customPrice, setCustomPrice] = useState("");
 

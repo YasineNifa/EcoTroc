@@ -2,6 +2,7 @@ from api.views.category import CategoryViewSet
 from api.views.conversation import ConversationViewSet
 from api.views.listing import ListingUserView, ListingViewSet
 from api.views.message import MessageViewSet
+from api.views.notification import NotificationViewSet
 from api.views.profile import ProfileView, ProfileViewSet
 from api.views.proposition import PropositionViewSet
 from api.views.review import ReviewViewSet
@@ -14,6 +15,7 @@ __all__ = [
     "ListingUserView",
     "ListingViewSet",
     "MessageViewSet",
+    "NotificationViewSet",
     "ProfileView",
     "PropositionViewSet",
     "ProfileViewSet",

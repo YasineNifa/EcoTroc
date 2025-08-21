@@ -20,8 +20,6 @@ const ListingDetailPage = () => {
     getResource(id);
   }, [getResource, id]);
 
-  console.log("Listing : ", resource);
-
   return (
     <div className="bg-white">
       <div className="container mx-auto px-4 py-8">
