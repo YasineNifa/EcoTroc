@@ -25,7 +25,6 @@ function App() {
             <Route path="/listings/create" element={<ListingForm />} />
             <Route path="/listings/:id" element={<ListingDetailPage />} />
             <Route path="/favorite-listings" element={<FavoriteList />} />
-            <Route path="/profile/:username" element={<ProfilePage />} />
             <Route path="/messages" element={<MessagesPage />} />
             <Route path="/profiles/:id" element={<ProfilePage />} />
             <Route

@@ -3,7 +3,7 @@ import Token from "./ui/Token";
 
 const ProfileDropdown = ({ profile, onLogout }) => {
   const menuItems = [
-    { label: "My Profile", navigation: `/profile/${profile?.user?.username}` },
+    { label: "My Profile", navigation: `/profiles/${profile?.user?.id}` },
     { label: "Settings" },
     { label: "Personalization" },
     {
