@@ -4,6 +4,7 @@ import Button from "../ui/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import getCommonOptions from "../../helpers/axios/getCommonOptions";
+import Token from "../ui/Token";
 
 // --- "Make an Offer" Modal ---
 const MakeOfferModal = ({ isOpen, onClose, item }) => {
@@ -59,7 +60,7 @@ const MakeOfferModal = ({ isOpen, onClose, item }) => {
         <div>
           <p className="font-semibold">{item?.title}</p>
           <p className="text-sm text-gray-500">
-            Prix de l'article: {item?.token_value.toFixed(2)} €
+            Prix de l'article: {item?.token_value} Tokens
           </p>
         </div>
       </div>
@@ -74,7 +75,10 @@ const MakeOfferModal = ({ isOpen, onClose, item }) => {
                 : "hover:border-gray-400"
             }`}
           >
-            <p className="font-bold">{offer?.token_value?.toFixed(2)} €</p>
+            <p className="font-bold">
+              {offer?.token_value}
+              <Token />
+            </p>
             <p className="text-xs text-green-600">
               {offer?.reduction} de réduction
             </p>

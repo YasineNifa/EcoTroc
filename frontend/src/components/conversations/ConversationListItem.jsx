@@ -1,3 +1,4 @@
+import Token from "../ui/Token";
 import TimeAgo from "./TimeAgo";
 
 const ConversationListItem = ({
@@ -66,7 +67,7 @@ const ConversationListItem = ({
             className="w-8 h-8 rounded-sm flex-shrink-0"
           />
           <p className="text-xs text-gray-400 flex-shrink-0">
-            {conversation.listing.token_value} 🪙
+            {conversation.listing.token_value} <Token />
           </p>
         </div>
       </div>
