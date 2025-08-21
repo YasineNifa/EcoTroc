@@ -174,9 +174,6 @@ class ListingViewSet(viewsets.ModelViewSet):
         if listing.status != Listing.Status.AVAILABLE:
             return Response({"detail": "This listing is not available for offers."}, status=status.HTTP_400_BAD_REQUEST)
 
-        #TODO: Create/use the existing conversation between the seller and the buyer for the listing
-        # and send a message in this conversation to the owner to suggest a price and inside the message,
-        # we should add three action, accept, refuse or propose onther offer to the buyer        
         conversation = (
             Conversation.objects.filter(listing=listing, participants=listing.owner)
             .filter(participants=user_profile)
@@ -186,21 +183,20 @@ class ListingViewSet(viewsets.ModelViewSet):
             conversation = Conversation.objects.create(listing=listing)
             conversation.participants.add(user_profile, listing.owner)
 
-        # Create a message for the offer
         message_content = f"{user_profile.user.username} has made an offer of {offer_amount} tokens for your item '{listing.title}'."
-        # You might want to store the offer details in the message or a related model
-        # For now, just sending the message
 
-        Message.objects.create(
-            conversation=conversation,
-            sender=user_profile,
-            content=message_content,
-        )
-        Proposition.objects.create(
+        proposition = Proposition.objects.create(
             listing=listing,
             buyer=user_profile,
             amount=offer_amount,
             status=Proposition.Status.PENDING
+        )
+        Message.objects.create(
+            conversation=conversation,
+            sender=user_profile,
+            content=message_content,
+            message_type=Message.MessageType.OFFER,
+            proposition=proposition
         )
 
 
