@@ -11,6 +11,7 @@ const ProfileDropdown = ({ profile, onLogout }) => {
       value: `${profile?.jeton_balance}`,
     },
     { label: "My Orders" },
+    { label: "My Transactions", navigation: "/transactions" },
     { label: "Donations" },
     { label: "Invite Friends" },
   ];

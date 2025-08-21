@@ -10,6 +10,7 @@ import Listings from "./pages/ListingPages/list";
 import ProfilePage from "./pages/ProfilePage/profile";
 import ListingDetailPage from "./pages/ListingPages/detail";
 import MessagesPage from "./pages/MessagePages/Message";
+import TransactionsPage from "./pages/transactions/TransactionPage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
               path="/messages/:conversationId"
               element={<MessagesPage />}
             />
+            <Route path="/transactions" element={<TransactionsPage />} />
           </Route>
         </Route>
       </Routes>
