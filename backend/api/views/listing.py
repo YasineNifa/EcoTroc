@@ -28,6 +28,7 @@ class ListingViewSet(viewsets.ModelViewSet):
     permissions_class = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_class = ListingFilter
+    # pagination_class = None
 
     
 
