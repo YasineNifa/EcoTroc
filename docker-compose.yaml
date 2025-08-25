@@ -19,7 +19,6 @@ services:
     ports:
       - "6379:6379"
 
-
   backend:
     build: ./backend
     command: python manage.py runserver 0.0.0.0:8000

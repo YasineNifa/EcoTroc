@@ -3,6 +3,7 @@ import ItemCard from "../../components/shared/ItemCard";
 import NotificationBanner from "../../components/shared/NotificationBanner";
 import useRequestResource from "../../hooks/useRequestResource";
 import ListListings from "../../components/ListListings";
+import ListingsPage from "../../components/ListingPage";
 
 function Listings() {
   //   const [isSellModalOpen, setSellModalOpen] = useState(false);
@@ -19,12 +20,13 @@ function Listings() {
   //   };
 
   useEffect(() => {
-    getResourceList();
+    getResourceList({ query: "?status=available" });
   }, [getResourceList]);
   return (
     <>
       <NotificationBanner />
-      <ListListings results={resourceList.results} />
+      {/* <ListListings results={resourceList.results} /> */}
+      <ListingsPage />
     </>
   );
 }

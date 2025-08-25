@@ -43,34 +43,40 @@ const ListingDetailPage = () => {
   }, [id]);
 
   return (
-    <div className="">
-      <div className="mx-auto">
-        <div className="flex justify-around flex-col lg:flex-row w-auto">
-          <div className="p-4 rounded-md w-[650px] h-[450px]">
-            <ListingImageGallery
-              imageUrl={resource?.image}
-              status={resource?.status}
-              title={resource?.title}
-              isAvailable={resource?.status === "available"}
-            />
+    <div className="bg-slate-50 min-h-screen py-8 md:py-12">
+      <main className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+          <div className="lg:col-span-3">
+            {isLoading ? (
+              <div className="aspect-square w-full bg-slate-200 rounded-lg animate-pulse" />
+            ) : (
+              <ListingImageGallery
+                imageUrl={resource?.image}
+                status={resource?.status}
+                title={resource?.title}
+              />
+            )}
           </div>
-          {pageIsLoading ? (
-            <ListingInfoPanelSkeleton />
-          ) : (
-            <ListingInfoPanel
-              listing={resource}
-              onMakeOffer={() => setOfferModalOpen(true)}
-              onAskAI={() => setAiModalOpen(true)}
-              finalPrice={finalPrice}
-            />
-          )}
+
+          <div className="lg:col-span-2">
+            {pageIsLoading ? (
+              <ListingInfoPanelSkeleton />
+            ) : (
+              <ListingInfoPanel
+                listing={resource}
+                onMakeOffer={() => setOfferModalOpen(true)}
+                onAskAI={() => setAiModalOpen(true)}
+                finalPrice={finalPrice}
+              />
+            )}
+          </div>
         </div>
         {/* <MoreFromSeller
           items={resource?.otherItems}
           sellerUsername={resource?.seller.username}
           currentListing={resource}
         /> */}
-      </div>
+      </main>
       <AskAIModal
         isOpen={isAiModalOpen}
         onClose={() => setAiModalOpen(false)}

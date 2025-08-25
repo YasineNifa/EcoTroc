@@ -788,3 +788,5 @@ Networking: Docker Compose automatically creates a shared network for these serv
 Volumes: I used a volume for the PostgreSQL database (- 'postgres_data:/var/lib/postgresql/data'). This ensures that the database data persists even if the container is stopped or removed."
 
 # Walk me through your Dockerfile. docker-compose.yaml, ...
+
+# docker exec -it ecotroc_db_1 psql -d ecocroc_db -U ecocroc_user
