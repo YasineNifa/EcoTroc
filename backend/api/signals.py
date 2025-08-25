@@ -24,12 +24,11 @@ def create_profile(sender, instance, created, **kwargs):
 def create_message_notification(sender, instance, created, **kwargs):
     if created:
         # Don't notify the user if they sent the message themselves
-        if instance.sender != instance.conversation.listing.owner:
-             recipient = instance.conversation.listing.owner
-        else:
-             recipient = instance.conversation.buyer
+        conversation = instance.conversation
+        sender_profile = instance.sender
+        recipient = conversation.participants.exclude(id=sender_profile.id).first()
 
-        if instance.sender != recipient:
+        if recipient:
             notification = Notification.objects.create(
                 recipient=recipient,
                 message=f"You have a new message from {instance.sender.user.username} regarding '{instance.conversation.listing.title}'.",
