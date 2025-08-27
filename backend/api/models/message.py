@@ -30,6 +30,7 @@ class Message(models.Model):
         blank=True,
         related_name='message'
     )
+    is_read = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["timestamp"]
