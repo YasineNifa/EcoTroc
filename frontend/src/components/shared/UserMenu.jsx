@@ -1,7 +1,5 @@
 import Icon from "../ui/Icon";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import InboxIcon from "@mui/icons-material/Inbox";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -9,6 +7,7 @@ import ProfileDropdown from "../ProfileDropdown";
 import { AuthContext } from "../../context/AuthContextProvider";
 import useRequestAuth from "../../hooks/useRequestAuth";
 import NotificationBell from "../notifications/NotificationBell";
+import MessageIcon from "../notifications/MessageIcon";
 
 const UserMenu = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -44,13 +43,10 @@ const UserMenu = () => {
         </Icon>
       </Link>
       <Link to="/messages" className="text-gray-600 hover:text-teal-600">
-        <Icon>
-          <InboxIcon />
-        </Icon>
+        <MessageIcon />
       </Link>
       <a href="#" className="text-gray-600 hover:text-teal-600">
         <Icon>
-          {/* <NotificationsNoneIcon /> */}
           <NotificationBell />
         </Icon>
       </a>
