@@ -5,7 +5,8 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 
-from api.models import Profile, Message, Notification
+from api.models import Profile, Message, Notification, Proposition
+from api.serializers import NotificationSerializer
 
 
 
@@ -23,7 +24,6 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Message)
 def create_message_notification(sender, instance, created, **kwargs):
     if created:
-        # Don't notify the user if they sent the message themselves
         conversation = instance.conversation
         sender_profile = instance.sender
         recipient = conversation.participants.exclude(id=sender_profile.id).first()
@@ -43,5 +43,22 @@ def create_message_notification(sender, instance, created, **kwargs):
             {
                 'type': 'send_notification', # This calls the send_notification method in the consumer
                 'message': notification.message # Send the notification message
+            }
+        )
+
+
+@receiver(post_save, sender=Proposition)
+def create_proposition_notificaton(sender, instance, created, **kwargs):
+    if created:
+        notification = Notification.objects.create(
+            recipient=instance.listing.owner,
+        )
+        serialized_notification = NotificationSerializer(notification).data
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'notifications_{instance.listing.owner.user.id}', # Target the specific user's group
+            {
+                'type': 'send_notification',
+                'notification': serialized_notification
             }
         )
