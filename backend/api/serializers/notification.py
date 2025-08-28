@@ -7,17 +7,21 @@ from api.models.proposition import Proposition
 # These will be used by the GenericRelatedField below.
 # They define what data is shown for the object linked to the notification.
 
+
 class NotificationMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ['id', 'conversation']
+        fields = ["id", "conversation"]
+
 
 class NotificationPropositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proposition
-        fields = ['id', 'listing', 'status']
+        fields = ["id", "listing", "status"]
+
 
 # --- The Main Notification Serializer ---
+
 
 class NotificationSerializer(serializers.ModelSerializer):
     # This field will dynamically serialize the related object (Message, Proposition, etc.)
@@ -27,15 +31,15 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = [
-            'id',
-            'recipient',
-            'message',
-            'notification_type',
-            'is_read',
-            'created_at',
-            'content_object', # The nested object data
+            "id",
+            "recipient",
+            "message",
+            "notification_type",
+            "is_read",
+            "created_at",
+            "content_object",  # The nested object data
         ]
-        read_only_fields = fields # Notifications are read-only from the API
+        read_only_fields = fields  # Notifications are read-only from the API
 
     def get_content_object(self, obj):
         """

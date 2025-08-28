@@ -4,6 +4,7 @@ from api.models import Review
 from api.serializers.profile import ProfileSerializer
 from api.serializers.transaction import TransactionSerializer
 
+
 class ReviewSerializer(serializers.ModelSerializer):
     reviewer = ProfileSerializer(read_only=True)
     reviewed_profile = ProfileSerializer(read_only=True)

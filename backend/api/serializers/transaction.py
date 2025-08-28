@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 
 from api.models import Transaction
@@ -12,5 +11,21 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["id", "buyer", "listing", "transaction_date", "status", "created_at", "updated_at"]
-        read_only_fields = ["id", "transaction_date", "buyer", "listing", "status", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "buyer",
+            "listing",
+            "transaction_date",
+            "status",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "transaction_date",
+            "buyer",
+            "listing",
+            "status",
+            "created_at",
+            "updated_at",
+        ]

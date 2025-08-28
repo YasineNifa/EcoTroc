@@ -3,6 +3,7 @@ from django.db import models
 from api.models.listing import Listing
 from api.models.profile import Profile
 
+
 class Conversation(models.Model):
     listing = models.ForeignKey(
         Listing, on_delete=models.CASCADE, related_name="conversations"

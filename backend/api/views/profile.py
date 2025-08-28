@@ -6,10 +6,9 @@ from api.serializers import ProfileSerializer
 
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
-    permissions_class = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        # Retourne le profil de l'utilisateur actuellement authentifié
         return self.request.user.profile
 
 

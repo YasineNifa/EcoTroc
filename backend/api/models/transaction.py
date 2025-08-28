@@ -28,6 +28,5 @@ class Transaction(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-
     def __str__(self):
         return f"Transaction for {self.listing.title}"

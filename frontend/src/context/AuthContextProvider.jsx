@@ -1,96 +1,53 @@
-import React, { useEffect, useMemo, useState, createContext } from "react";
-import PropTypes from "prop-types";
-import axios from "axios";
-import getCommonOptions from "../helpers/axios/getCommonOptions";
+import React, { useEffect, useMemo, useState, createContext, useCallback } from "react";
 import apiClient from "../services/api";
 
-export const AuthContext = createContext({
-  setIsAuthenticated: () => {},
-  setUser: () => {},
-  setProfile: () => {},
-  isAuthenticated: null,
-  user: null,
-  profile: null,
-});
+export const AuthContext = createContext();
 
 export default function AuthContextProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadAuthUser = () => {
-    const authToken = localStorage.getItem("authToken");
-    if (!authToken) {
+  const fetchUser = useCallback(async () => {
+    console.log("AuthContext: Attempting to fetch user...");
+    try {
+      const response = await apiClient.get("/profile/me/");
+      const userProfile = response.data;
+      
+      console.log("AuthContext: User fetch successful.", userProfile);
+      setProfile(userProfile);
+      setUser(userProfile.user);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.log("AuthContext: User fetch failed. User is not authenticated.");
+      setUser(null);
+      setProfile(null);
       setIsAuthenticated(false);
-      return;
     }
-    axios
-      .get("http://localhost:8000/api/auth/users/me/", getCommonOptions())
-      .then((res) => {
-        setUser(res.data);
-        setIsAuthenticated(true);
-      })
-      .catch(() => {
-        setIsAuthenticated(false);
-      });
-  };
-
-  const loadAuthProfile = () => {
-    const authToken = localStorage.getItem("authToken");
-    if (!authToken) {
-      setIsAuthenticated(false);
-      return;
-    }
-    axios
-      .get("http://localhost:8000/api/profile/me/", getCommonOptions())
-      .then((res) => {
-        setProfile(res.data);
-        setIsAuthenticated(true);
-      })
-      .catch(() => {
-        setIsAuthenticated(false);
-      });
-  };
-
-  const providerValue = useMemo(() => {
-    return {
-      setIsAuthenticated,
-      setUser,
-      setProfile,
-      isAuthenticated,
-      user,
-      profile,
-      isLoading,
-    };
-  }, [isAuthenticated, setIsAuthenticated, user, setUser, profile, setProfile]);
+  }, []);
 
   useEffect(() => {
+    console.log("AuthContext: Initializing authentication check...");
     const checkAuthStatus = async () => {
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        try {
-          apiClient.defaults.headers.common["Authorization"] = `Token ${token}`;
-          const response = await apiClient.get("/auth/users/me/");
-          setUser(response.data);
-          setIsAuthenticated(true);
-        } catch (error) {
-          localStorage.removeItem("authToken");
-          setIsAuthenticated(false);
-        }
-      } else {
-        setIsAuthenticated(false);
-      }
+      setIsLoading(true);
+      await fetchUser();
       setIsLoading(false);
+      console.log("AuthContext: Authentication check finished.");
     };
     checkAuthStatus();
-  }, []);
-  useEffect(() => {
-    if (!user && (isAuthenticated === null || isAuthenticated === true)) {
-      loadAuthUser();
-      loadAuthProfile();
-    }
-  }, [user, isAuthenticated]);
+  }, [fetchUser]);
+
+  const providerValue = useMemo(() => ({
+    isAuthenticated,
+    user,
+    profile,
+    isLoading,
+    fetchUser,
+    setIsAuthenticated,
+    setUser,
+    setProfile,
+  }), [isAuthenticated, user, profile, isLoading, fetchUser]);
 
   return (
     <AuthContext.Provider value={providerValue}>
@@ -98,7 +55,3 @@ export default function AuthContextProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-
-AuthContextProvider.propTypes = {
-  children: PropTypes.node,
-};

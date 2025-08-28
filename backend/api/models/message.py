@@ -11,9 +11,7 @@ class Message(models.Model):
         OFFER = "offer", "Offer"
 
     message_type = models.CharField(
-        max_length=10,
-        choices=MessageType.choices,
-        default=MessageType.TEXT
+        max_length=10, choices=MessageType.choices, default=MessageType.TEXT
     )
     conversation = models.ForeignKey(
         Conversation, on_delete=models.CASCADE, related_name="messages"
@@ -24,11 +22,11 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     proposition = models.OneToOneField(
-        Proposition, 
+        Proposition,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='message'
+        related_name="message",
     )
     is_read = models.BooleanField(default=False)
 

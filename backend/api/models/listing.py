@@ -35,12 +35,12 @@ class Listing(models.Model):
     )
     category = models.ForeignKey(
         Category,
-        related_name='listings',
+        related_name="listings",
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
     )
-    likes = models.ManyToManyField(Profile, related_name='liked_listings', blank=True)
+    likes = models.ManyToManyField(Profile, related_name="liked_listings", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -52,4 +52,3 @@ class Listing(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-

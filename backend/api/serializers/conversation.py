@@ -15,13 +15,26 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Conversation
-        fields = ["id", "listing", "participants", "messages", "created_at", "has_unread_messages", "last_message"]
+        fields = [
+            "id",
+            "listing",
+            "participants",
+            "messages",
+            "created_at",
+            "has_unread_messages",
+            "last_message",
+        ]
         read_only_fields = ["id", "created_at", "listing", "participants", "messages"]
 
     def get_has_unread_messages(self, obj):
-        user = self.context["request"].user.profile
-        return obj.messages.filter(is_read=False).exclude(sender=user).exists()
-    
+        request = self.context.get("request")
+        if request:
+            user = request.user.profile
+            print(obj.messages.filter(is_read=False).exclude(sender=user))
+            return obj.messages.filter(is_read=False).exclude(sender=user).exists()
+
+        return False
+
     def get_last_message(self, obj):
         last_message = obj.messages.order_by("-timestamp").first()
         return MessageSerializer(last_message).data if last_message else None

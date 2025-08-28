@@ -1,16 +1,20 @@
 import React, { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContextProvider";
+import Loading from "../../components/Loading";
 
 export default function RequireNotAuth() {
-  const context = useContext(AuthContext);
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
 
-  // if (isAuthenticated === null) {
-  //   return <div>Loading RequireNotAuth...</div>;
-  // }
+  console.log(`RequireNotAuth: isLoading=${isLoading}, isAuthenticated=${isAuthenticated}`);
 
-  if (context.isAuthenticated === true) {
-    return <Navigate to="/" />;
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isAuthenticated) {
+    console.log("RequireNotAuth: Redirecting to /");
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;

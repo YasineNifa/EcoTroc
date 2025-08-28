@@ -23,9 +23,14 @@ export const useNotificationSocket = () => {
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       const newNotification = data.notification;
-
-      // Add the new notification to the beginning of the list
-      setAllNotifications((prev) => [newNotification, ...prev]);
+      if (data.type === "notifications_updated") {
+        apiClient.get("/notifications/", getCommonOptions()).then((res) => {
+          setAllNotifications(res.data.results);
+        });
+      } else if (data.notification) {
+        const newNotification = data.notification;
+        setAllNotifications((prev) => [newNotification, ...prev]);
+      }
     };
 
     socket.onclose = () => console.error("Notification socket closed.");

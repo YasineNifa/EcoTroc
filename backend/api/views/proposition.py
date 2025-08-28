@@ -14,6 +14,7 @@ class PropositionViewSet(viewsets.ReadOnlyModelViewSet):
     Users can list offers they've made or received.
     Sellers can accept or reject offers.
     """
+
     queryset = Proposition.objects.all()
     serializer_class = PropositionSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -29,28 +30,36 @@ class PropositionViewSet(viewsets.ReadOnlyModelViewSet):
             Q(buyer=user_profile) | Q(listing__owner=user_profile)
         ).distinct()
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def accept(self, request, pk=None):
         proposition = self.get_object()
         user_profile = request.user.profile
 
         # Check if the user is the owner of the listing
         if proposition.listing.owner != user_profile:
-            return Response({"detail": "You are not authorized to accept this offer."}, status=status.HTTP_403_FORBIDDEN)
-        
+            return Response(
+                {"detail": "You are not authorized to accept this offer."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         # Check if the offer is still pending
         if proposition.status != Proposition.Status.PENDING:
-            return Response({"detail": "This offer is no longer pending."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "This offer is no longer pending."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # TODO: Add logic for transaction (e.g., deducting tokens, changing listing status)
-        
+
         proposition.status = Proposition.Status.ACCEPTED
         proposition.save()
-        
+
         # Notify the buyer
         # Message.objects.create(...)        # Create a message to the buyer about the accepted offer
         conversation = (
-            Conversation.objects.filter(listing=proposition.listing, participants=proposition.listing.owner)
+            Conversation.objects.filter(
+                listing=proposition.listing, participants=proposition.listing.owner
+            )
             .filter(participants=user_profile)
             .first()
         )
@@ -63,23 +72,27 @@ class PropositionViewSet(viewsets.ReadOnlyModelViewSet):
             content=f"Your offer of {proposition.amount} tokens for '{proposition.listing.title}' has been ACCEPTED!",
         )
 
-
         return Response({"status": "Offer accepted"}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def reject(self, request, pk=None):
         proposition = self.get_object()
         user_profile = request.user.profile
 
         # Check if the user is the owner of the listing
         if proposition.listing.owner != user_profile:
-            return Response({"detail": "You are not authorized to reject this offer."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "You are not authorized to reject this offer."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         proposition.status = Proposition.Status.REJECTED
         proposition.save()
 
         conversation = (
-            Conversation.objects.filter(listing=proposition.listing, participants=proposition.listing.owner)
+            Conversation.objects.filter(
+                listing=proposition.listing, participants=proposition.listing.owner
+            )
             .filter(participants=user_profile)
             .first()
         )

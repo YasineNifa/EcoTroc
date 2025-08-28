@@ -11,10 +11,16 @@ class Proposition(models.Model):
         REJECTED = "rejected", "Rejected"
         COUNTERED = "countered", "Countered"
 
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="propositions")
-    buyer = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="made_propositions")    
+    listing = models.ForeignKey(
+        Listing, on_delete=models.CASCADE, related_name="propositions"
+    )
+    buyer = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="made_propositions"
+    )
     amount = models.PositiveIntegerField()
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.PENDING
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

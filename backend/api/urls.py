@@ -14,6 +14,9 @@ from api.views import (
     ProfileViewSet,
     PropositionViewSet,
     ListingUserView,
+    CookieTokenObtainPairView,
+    CookieTokenRefreshView,
+    LogoutView,
 )
 
 
@@ -24,8 +27,8 @@ router.register(r"reviews", ReviewViewSet, basename="reviews")
 router.register(r"profiles", ProfileViewSet, basename="profiles")
 router.register(r"conversations", ConversationViewSet, basename="conversations")
 router.register(r"categories", CategoryViewSet, basename="categories")
-router.register(r'propositions', PropositionViewSet, basename='proposition')
-router.register(r'notifications', NotificationViewSet, basename='notifications')
+router.register(r"propositions", PropositionViewSet, basename="proposition")
+router.register(r"notifications", NotificationViewSet, basename="notifications")
 
 
 conversations_router = routers.NestedSimpleRouter(
@@ -42,5 +45,8 @@ urlpatterns = [
     # The nested router handles URLs like /api/conversations/{conversation_pk}/messages/
     path("", include(conversations_router.urls)),
     path("mylistings/", ListingUserView.as_view(), name="my-listings"),
+    path('token/', CookieTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', CookieTokenRefreshView.as_view(), name='token_refresh'),
+    path('logout/', LogoutView.as_view(), name='logout'),
 ]
 # urlpatterns += router.urls

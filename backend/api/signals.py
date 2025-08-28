@@ -9,8 +9,6 @@ from api.models import Profile, Message, Notification, Proposition
 from api.serializers import NotificationSerializer
 
 
-
-
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     """
@@ -33,17 +31,17 @@ def create_message_notification(sender, instance, created, **kwargs):
                 recipient=recipient,
                 message=f"You have a new message from {instance.sender.user.username} regarding '{instance.conversation.listing.title}'.",
                 notification_type=Notification.NotificationType.NEW_MESSAGE,
-                content_object=instance
+                content_object=instance,
             )
 
-        # Now, push it to the WebSocket
+        serialized_notification = NotificationSerializer(notification).data
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'notifications_{recipient.user.id}', # Target the specific user's group
+            f"notifications_{recipient.user.id}",  # Target the specific user's group
             {
-                'type': 'send_notification', # This calls the send_notification method in the consumer
-                'message': notification.message # Send the notification message
-            }
+                "type": "send_notification",  # This calls the send_notification method in the consumer
+                "notification": serialized_notification,
+            },
         )
 
 
@@ -56,9 +54,6 @@ def create_proposition_notificaton(sender, instance, created, **kwargs):
         serialized_notification = NotificationSerializer(notification).data
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'notifications_{instance.listing.owner.user.id}', # Target the specific user's group
-            {
-                'type': 'send_notification',
-                'notification': serialized_notification
-            }
+            f"notifications_{instance.listing.owner.user.id}",
+            {"type": "send_notification", "notification": serialized_notification},
         )

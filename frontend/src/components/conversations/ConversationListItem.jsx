@@ -19,7 +19,6 @@ const ConversationListItem = ({
           src={
             otherParticipant.image ||
             `https://placehold.co/40x40/E2E8F0/4A5568?text=${otherParticipant.user.username}`
-            // `https://i.pravatar.cc/32?u=${otherParticipant.user.username}`
           }
           alt="Image"
           className="w-12 h-12 rounded-full flex-shrink-0"
@@ -44,31 +43,29 @@ const ConversationListItem = ({
             {otherParticipant.user.username}
           </p>
           <p className="text-xs text-gray-400 flex-shrink-0">
-            {/* {conversation.created_at} */}
             <TimeAgo date={conversation.created_at} />
           </p>
         </div>
         <div className="flex justify-between items-end mt-1">
-          {/* <p
-            className={`text-sm truncate pr-2 ${
-              conversation.unread ? "text-black font-semibold" : "text-gray-500"
+          <p
+            className={`w-[80%] text-sm truncate pr-2 ${
+              conversation.has_unread_messages
+                ? "text-black font-semibold"
+                : "text-gray-500"
             }`}
           >
-            {conversation.lastMessage}
+            {conversation.last_message?.content}
           </p>
-          <img
-            src={conversation.itemImageUrl}
-            alt="item"
-            className="w-8 h-8 rounded-sm flex-shrink-0"
-          /> */}
-          <img
-            src={conversation.listing.image}
-            alt="item"
-            className="w-8 h-8 rounded-sm flex-shrink-0"
-          />
-          <p className="text-xs text-gray-400 flex-shrink-0">
-            {conversation.listing.token_value} <Token />
-          </p>
+          <div className="w-[20%] flex justify-between items-center">
+            <img
+              src={conversation.listing.image}
+              alt="item"
+              className="w-8 h-8 rounded-sm flex-shrink-0"
+            />
+            <p className="text-xs text-gray-400 flex-shrink-0">
+              {conversation.listing.token_value} <Token />
+            </p>
+          </div>
         </div>
       </div>
     </div>

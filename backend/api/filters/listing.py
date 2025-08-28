@@ -3,12 +3,13 @@
 from django_filters import rest_framework as filters
 from api.models import Listing
 
+
 class ListingFilter(filters.FilterSet):
-    liked_by_user = filters.BooleanFilter(method='filter_liked_by_user')
+    liked_by_user = filters.BooleanFilter(method="filter_liked_by_user")
 
     class Meta:
         model = Listing
-        fields = ['category', 'brand', 'liked_by_user', 'owner', 'status']
+        fields = ["category", "brand", "liked_by_user", "owner", "status"]
 
     def filter_liked_by_user(self, queryset, name, value):
         """
@@ -20,5 +21,5 @@ class ListingFilter(filters.FilterSet):
         user = self.request.user
         if user.is_authenticated and value:
             return queryset.filter(likes=user.profile)
-        
+
         return queryset

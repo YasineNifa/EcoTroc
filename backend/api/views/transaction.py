@@ -58,11 +58,15 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
             listing = transaction.listing
 
             # 1. Find the last accepted proposition for this buyer and listing
-            accepted_proposition = Proposition.objects.filter(
-                listing=listing,
-                buyer=buyer_profile,
-                status=Proposition.Status.ACCEPTED
-            ).order_by('-created_at').first()
+            accepted_proposition = (
+                Proposition.objects.filter(
+                    listing=listing,
+                    buyer=buyer_profile,
+                    status=Proposition.Status.ACCEPTED,
+                )
+                .order_by("-created_at")
+                .first()
+            )
 
             # 2. Determine the final transaction amount
             if accepted_proposition:
