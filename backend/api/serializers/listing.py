@@ -49,6 +49,9 @@ class ListingSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "is_liked",
+            "location",
+            "latitude",
+            "longitude",
         ]
         read_only_fields = [
             "id",
