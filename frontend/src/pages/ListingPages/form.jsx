@@ -90,10 +90,8 @@ export default function ListingForm() {
       };
 
       if (isEditMode) {
-        // Use PATCH for updates
         updateResource(listingId, formData, handleSuccess);
       } else {
-        // Use POST for creation
         addResource(formData, handleSuccess);
       }
     },
