@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Review
+from api.models import Review, Transaction
 from api.serializers.profile import ProfileSerializer
 from api.serializers.transaction import TransactionSerializer
 
@@ -9,6 +9,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     reviewer = ProfileSerializer(read_only=True)
     reviewed_profile = ProfileSerializer(read_only=True)
     transaction = TransactionSerializer(read_only=True)
+    transaction_id = serializers.PrimaryKeyRelatedField(
+        queryset=Transaction.objects.all(), 
+        source='transaction',
+        write_only=True
+    )
 
     class Meta:
         model = Review
@@ -17,6 +22,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             "reviewer",
             "reviewed_profile",
             "transaction",
+            "transaction_id",
             "rating",
             "comment",
             "created_at",
@@ -31,13 +37,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         request = self.context["request"]
         reviewer_profile = request.user.profile
 
-        # 1. Check if the transaction is completed
         if transaction.status != "completed":
             raise serializers.ValidationError(
                 "You can only review completed transactions."
             )
 
-        # 2. Check if the reviewer was part of the transaction
         seller_profile = transaction.listing.owner
         buyer_profile = transaction.buyer.profile
         if reviewer_profile != seller_profile and reviewer_profile != buyer_profile:
@@ -45,7 +49,6 @@ class ReviewSerializer(serializers.ModelSerializer):
                 "You were not a participant in this transaction."
             )
 
-        # 3. Check if the user has already reviewed this transaction
         if Review.objects.filter(
             transaction=transaction, reviewer=reviewer_profile
         ).exists():
