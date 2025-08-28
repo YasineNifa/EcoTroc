@@ -10,6 +10,9 @@ const FormikTextInput = ({ formik, label, name, placeholder }) => (
         name={name}
         placeholder={placeholder}
         {...formik.getFieldProps(name)}
+        // value={value}
+        // onChange={onChange}
+        // autoComplete={autoComplete}
         className="p-2 border-b border-gray-300 focus:border-teal-500 focus:outline-none"
       />
       {formik.touched[name] && formik.errors[name] ? (

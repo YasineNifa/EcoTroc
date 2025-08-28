@@ -10,6 +10,7 @@ import FormikTextArea from "../../components/ui/FormikTextArea";
 import { useNavigate } from "react-router-dom";
 import Token from "../../components/ui/Token";
 import { useParams } from "react-router-dom";
+import LocationAutocomplete from "../../components/Product/LocationAutocomplete";
 
 export default function ListingForm() {
   // --- State for non-Formik values ---
@@ -53,6 +54,9 @@ export default function ListingForm() {
       token_value: listingData?.token_value || "",
       condition: listingData?.condition || "very_good",
       size: listingData?.size || "",
+      location: listingData?.location || "",
+      latitude: listingData?.latitude || null,
+      longitude: listingData?.longitude || null,
     },
     // --- Basic Validation Example ---
     validate: (values) => {
@@ -338,6 +342,10 @@ export default function ListingForm() {
               </div>
             </div>
           </div>
+        </FormSection>
+
+        <FormSection>
+          <LocationAutocomplete formik={formik} />
         </FormSection>
 
         <FormSection>
