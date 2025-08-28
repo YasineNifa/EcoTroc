@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import ProfileHeader from "../../components/header/ProfileHeader";
 import ReviewsTab from "../../components/header/ReviewTab";
 import ListingsTab from "../../components/header/ListingTab";
@@ -7,6 +7,7 @@ import useRequestResource from "../../hooks/useRequestResource";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContextProvider";
 import TabButton from "../../components/ui/TabButton";
+import ReviewList from "../ReviewPages/ReviewList";
 
 const ProfilePage = () => {
   const { profile, user } = useContext(AuthContext);
@@ -33,7 +34,8 @@ const ProfilePage = () => {
       case "listings":
         return <ListingsTab listings={resourceList.results} />;
       case "reviews":
-        return <ReviewsTab reviews={reviews.results} />;
+        // return <ReviewsTab reviews={reviews.results} />;
+        return <ReviewList reviews={reviews.results} />;
       case "statistics":
         return <StatsTab />;
       default:
@@ -45,9 +47,24 @@ const ProfilePage = () => {
     if (id) {
       getResource(id);
       getResourceList({ query: "?owner=" + id });
-      getReviews();
+      getReviews({ query: `?reviewed_profile=${id}` });
     }
   }, [id, getResource, getResourceList, getReviews]);
+
+  const { averageRating, reviewCount } = useMemo(() => {
+    const reviewsData = reviews.results || [];
+    if (reviewsData.length === 0) {
+      return { averageRating: 0, reviewCount: 0 };
+    }
+    const totalRating = reviewsData.reduce(
+      (sum, review) => sum + review.rating,
+      0
+    );
+    return {
+      averageRating: totalRating / reviewsData.length,
+      reviewCount: reviewsData.length,
+    };
+  }, [reviews]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -55,6 +72,8 @@ const ProfilePage = () => {
         profile={resource}
         navigaterProfile={profile}
         navigaterUser={user}
+        averageRating={averageRating}
+        reviewCount={reviewCount}
       />
       <div className="flex items-center border-b mb-6">
         <TabButton

@@ -1,11 +1,14 @@
 import { useState } from "react";
 import BioGeneratorModal from "../geminiPowered/BioGeneratorModal";
 import Button from "../ui/Button";
-import Icon from "../ui/Icon";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
-import StarIcon from "@mui/icons-material/Star";
+import StarRating from "../reviews/StarRating";
 
-const ProfileHeader = ({ profile, navigaterProfile }) => {
+const ProfileHeader = ({
+  profile,
+  navigaterProfile,
+  averageRating,
+  reviewCount,
+}) => {
   const [isBioModalOpen, setBioModalOpen] = useState(false);
   const [currentBio, setCurrentBio] = useState(profile?.bio);
 
@@ -25,18 +28,10 @@ const ProfileHeader = ({ profile, navigaterProfile }) => {
           <div className="flex-1 text-end flex justify-between">
             <div className="flex justify-start flex-col items-start">
               <h1 className="text-2xl font-bold">{profile?.user?.username}</h1>
-              <div className="flex items-center justify-center md:justify-start gap-1 text-yellow-500 my-2">
-                {[...Array(5)].map((_, i) => (
-                  <Icon key={i} className="!text-base">
-                    {i < Math.round(profile?.rating) ? (
-                      <StarIcon />
-                    ) : (
-                      <StarBorderIcon />
-                    )}
-                  </Icon>
-                ))}
-                <span className="text-gray-600 text-sm ml-1">
-                  {profile?.reviewsCount} reviews
+              <div className="flex items-center justify-center md:justify-start gap-1 my-2">
+                <StarRating rating={averageRating} />
+                <span className="text-gray-600 text-sm ml-2">
+                  {averageRating.toFixed(1)} ({reviewCount} reviews)
                 </span>
               </div>
               <p className="text-sm text-gray-700 mt-6 text-center md:text-left">
@@ -52,7 +47,6 @@ const ProfileHeader = ({ profile, navigaterProfile }) => {
                   <Button
                     variant="secondary"
                     onClick={() => setBioModalOpen(true)}
-                    // className="mt-2 text-xs !px-2 !py-1"
                   >
                     ✨ Generate Bio with AI
                   </Button>
