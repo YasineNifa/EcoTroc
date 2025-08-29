@@ -6,3 +6,4 @@ WORKDIR /usr/src/app
 COPY requirements.txt /usr/src/app/
 RUN pip install --timeout=100 -r requirements.txt
 COPY . /usr/src/app/
+CMD ["./start.sh"]

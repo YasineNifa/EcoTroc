@@ -24,6 +24,9 @@ drf-nested-routers
 #Setting up Django Channels
 channels
 channels-redis
+#Deployment
+daphne
+gunicorn
 
 
 
