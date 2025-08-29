@@ -27,6 +27,7 @@ channels-redis
 #Deployment
 daphne
 gunicorn
+dj-database-url
 
 
 

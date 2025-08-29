@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+import dj_database_url
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -52,11 +55,20 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = "config.asgi.application"
 
 # Configure the channel layer to use Redis
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("redis", 6379)],
+#         },
+#     },
+# }
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://redis:6379')
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],
+            "hosts": [REDIS_URL],
         },
     },
 }
@@ -120,16 +132,25 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": "ecocroc_db",
+#         "USER": "ecocroc_user",
+#         "PASSWORD": "ecocroc_password",
+#         "HOST": "db",
+#         "PORT": "5432",
+#         "OPTIONS": {},
+#     }
+# }
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "ecocroc_db",
-        "USER": "ecocroc_user",
-        "PASSWORD": "ecocroc_password",
-        "HOST": "db",
-        "PORT": "5432",
-        "OPTIONS": {},
-    }
+    'default': dj_database_url.config(
+        # This will read the DATABASE_URL secret from Fly.io
+        # and fall back to your local setup if it's not found.
+        default=f"postgresql://{os.environ.get('POSTGRES_USER')}:{os.environ.get('POSTGRES_PASSWORD')}@{os.environ.get('POSTGRES_HOSTNAME')}:{os.environ.get('POSTGRES_PORT')}/{os.environ.get('POSTGRES_DB')}",
+        conn_max_age=600
+    )
 }
 
 
