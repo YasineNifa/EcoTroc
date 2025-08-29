@@ -23,7 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-7kfm9x821491h840w3nd$+&g8@90o*^%#n%z5nify-l!a5y5gu"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = False
+
 
 ALLOWED_HOSTS = ["*"]
 
@@ -40,10 +42,10 @@ INSTALLED_APPS = [
     "channels",
     "corsheaders",
     "rest_framework",
-    # "rest_framework.authtoken",
     "rest_framework_simplejwt",
-    "djoser",
     "django_filters",
+    # "rest_framework.authtoken",
+    # "djoser",
     "api.apps.ApiConfig",
 ]
 

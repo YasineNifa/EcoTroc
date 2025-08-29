@@ -4,8 +4,9 @@ black
 asgiref
 certifi
 charset-normalizer
-dj-rest-auth==7.0.1
-django-allauth==65.10.0
+# dj-rest-auth==7.0.1
+# django-allauth==65.10.0
+# djoser
 django-cors-headers
 django-filter
 djangorestframework
@@ -17,7 +18,6 @@ requests
 sqlparse
 urllib3
 pandas
-djoser
 python-dotenv
 Pillow
 drf-nested-routers
