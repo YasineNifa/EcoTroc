@@ -55,23 +55,23 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = "config.asgi.application"
 
 # Configure the channel layer to use Redis
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("redis", 6379)],
-        },
-    },
-}
-# REDIS_URL = os.environ.get('REDIS_URL', 'redis://redis:6379')
 # CHANNEL_LAYERS = {
 #     "default": {
 #         "BACKEND": "channels_redis.core.RedisChannelLayer",
 #         "CONFIG": {
-#             "hosts": [REDIS_URL],
+#             "hosts": [("redis", 6379)],
 #         },
 #     },
 # }
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://redis:6379')
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
+    },
+}
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -132,26 +132,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get('POSTGRES_DB'),
-        "USER": os.environ.get('POSTGRES_USER'),
-        "PASSWORD": os.environ.get('POSTGRES_PASSWORD'),
-        "HOST": os.environ.get('POSTGRES_HOSTNAME'),
-        "PORT": os.environ.get('POSTGRES_PORT'),
-        "OPTIONS": {},
-    }
-}
-
 # DATABASES = {
-#     'default': dj_database_url.config(
-#         # This will read the DATABASE_URL secret from Fly.io
-#         # and fall back to your local setup if it's not found.
-#         default=f"postgresql://{os.environ.get('POSTGRES_USER')}:{os.environ.get('POSTGRES_PASSWORD')}@{os.environ.get('POSTGRES_HOSTNAME')}:{os.environ.get('POSTGRES_PORT')}/{os.environ.get('POSTGRES_DB')}",
-#         conn_max_age=600
-#     )
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": os.environ.get('POSTGRES_DB'),
+#         "USER": os.environ.get('POSTGRES_USER'),
+#         "PASSWORD": os.environ.get('POSTGRES_PASSWORD'),
+#         "HOST": os.environ.get('POSTGRES_HOSTNAME'),
+#         "PORT": os.environ.get('POSTGRES_PORT'),
+#         "OPTIONS": {},
+#     }
 # }
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f"postgresql://{os.environ.get('POSTGRES_USER')}:{os.environ.get('POSTGRES_PASSWORD')}@{os.environ.get('POSTGRES_HOSTNAME')}:{os.environ.get('POSTGRES_PORT')}/{os.environ.get('POSTGRES_DB')}",
+        conn_max_age=600
+    )
+}
 
 
 # Password validation
