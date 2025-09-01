@@ -3,6 +3,7 @@ from api.models import (
     Category,
     Conversation,
     Listing,
+    ListingImage,
     Message,
     Notification,
     Profile,
@@ -15,6 +16,7 @@ from api.models import (
 admin.site.register(Category)
 admin.site.register(Conversation)
 admin.site.register(Listing)
+admin.site.register(ListingImage)
 admin.site.register(Message)
 admin.site.register(Notification)
 admin.site.register(Profile)
