@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from api.models import Listing
+from api.serializers.listing_image import ListingImageSerializer
 from api.serializers.profile import ProfileSerializer
 
 
@@ -27,6 +28,8 @@ class ListingSerializer(serializers.ModelSerializer):
         source="get_category_display", read_only=True
     )
     status_display = serializers.CharField(source="get_status_display", read_only=True)
+    images = ListingImageSerializer(many=True, read_only=True)
+
 
     class Meta:
         model = Listing
@@ -52,6 +55,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "location",
             "latitude",
             "longitude",
+            "images",
         ]
         read_only_fields = [
             "id",
