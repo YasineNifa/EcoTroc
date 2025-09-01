@@ -47,7 +47,7 @@ class ListingViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)        
+        serializer.is_valid(raise_exception=True)
         image_data = serializer.validated_data.pop('uploaded_images', None)
         self.perform_update(serializer)
         if image_data:
