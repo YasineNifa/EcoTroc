@@ -51,9 +51,8 @@ const ListingDetailPage = () => {
               <div className="aspect-square w-full bg-slate-200 rounded-lg animate-pulse" />
             ) : (
               <ListingImageGallery
-                imageUrl={resource?.image}
+                images={resource?.images}
                 status={resource?.status}
-                title={resource?.title}
               />
             )}
           </div>
