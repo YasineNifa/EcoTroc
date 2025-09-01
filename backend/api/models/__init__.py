@@ -1,6 +1,7 @@
 from api.models.category import Category
 from api.models.conversation import Conversation
 from api.models.listing import Listing
+from api.models.listing_image import ListingImage
 from api.models.message import Message
 from api.models.notification import Notification
 from api.models.profile import Profile
@@ -13,6 +14,7 @@ __all__ = [
     "Category",
     "Conversation",
     "Listing",
+    "ListingImage",
     "Message",
     "Notification",
     "Profile",
