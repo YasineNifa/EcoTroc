@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useNavigate, useParams } from "react-router-dom";
-import useRequestResource from "../..//hooks/useRequestResource";
+import useRequestResource from "../../hooks/useRequestResource";
+import apiClient from "../../services/api";
 // UI Components
+import FormSection from "../../components/ui/FormSection";
 import Icon from "../../components/ui/Icon";
 import Button from "../../components/ui/Button";
 import FormikTextInput from "../../components/ui/FormikTextInput";
@@ -13,7 +15,6 @@ import LocationAutocomplete from "../../components/Product/LocationAutocomplete"
 // Icons
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import CloseIcon from "@mui/icons-material/Close";
-import FormSection from "../../components/ui/FormSection";
 
 export default function ListingForm() {
   const { id: listingId } = useParams();
@@ -21,8 +22,8 @@ export default function ListingForm() {
   const navigate = useNavigate();
   const [imagePreviews, setImagePreviews] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
+  const [imagesToDelete, setImagesToDelete] = useState([]);
 
-  // --- API Hooks ---
   const {
     addResource,
     updateResource,
@@ -42,7 +43,6 @@ export default function ListingForm() {
     }
   }, [getCategories, getResource, listingId, isEditMode]);
 
-  // --- Formik Setup ---
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -61,17 +61,20 @@ export default function ListingForm() {
       const errors = {};
       if (!values.title) errors.title = "Required";
       if (!values.token_value) errors.token_value = "Required";
-      // Validation for new listings: check if at least one image has been staged
-      if (
-        !isEditMode &&
-        imageFiles.length === 0 &&
-        imagePreviews.length === 0
-      ) {
+      if (imagePreviews.length === 0) {
         errors.images = "At least one image is required.";
       }
       return errors;
     },
-    onSubmit: (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting }) => {
+      if (isEditMode && imagesToDelete.length > 0) {
+        await Promise.all(
+          imagesToDelete.map((imageId) =>
+            apiClient.delete(`/listing-images/${imageId}/`)
+          )
+        );
+      }
+
       const formData = new FormData();
       for (const key in values) {
         if (values[key] !== null) {
@@ -114,15 +117,21 @@ export default function ListingForm() {
   const handleRemoveImage = (indexToRemove) => {
     const previewToRemove = imagePreviews[indexToRemove];
 
-    // Check if the removed image was a new file by looking for its object URL
-    const fileIndex = imageFiles.findIndex(
-      (file) => URL.createObjectURL(file) === previewToRemove
+    const existingImage = listingData?.images.find(
+      (img) => img.image === previewToRemove
     );
-    if (fileIndex > -1) {
-      setImageFiles((prev) => prev.filter((_, index) => index !== fileIndex));
+
+    if (existingImage) {
+      setImagesToDelete((prev) => [...prev, existingImage.id]);
+    } else {
+      const fileIndex = imageFiles.findIndex(
+        (file) => URL.createObjectURL(file) === previewToRemove
+      );
+      if (fileIndex > -1) {
+        setImageFiles((prev) => prev.filter((_, index) => index !== fileIndex));
+      }
     }
 
-    // Always remove the preview
     setImagePreviews((prev) =>
       prev.filter((_, index) => index !== indexToRemove)
     );
@@ -134,8 +143,6 @@ export default function ListingForm() {
         <h2 className="text-2xl font-semibold mb-6">
           {isEditMode ? "Edit your item" : "Sell your item"}
         </h2>
-
-        {/* --- MULTI-IMAGE UPLOAD SECTION --- */}
         <FormSection>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 mb-4">
@@ -159,7 +166,6 @@ export default function ListingForm() {
                 </div>
               ))}
             </div>
-
             <label
               htmlFor="photo-upload"
               className="cursor-pointer inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700"
@@ -185,7 +191,6 @@ export default function ListingForm() {
             )}
           </div>
         </FormSection>
-
         <FormSection>
           <div className="space-y-4">
             <FormikTextInput
@@ -203,7 +208,6 @@ export default function ListingForm() {
             />
           </div>
         </FormSection>
-
         <FormSection>
           <div className="space-y-4">
             <div className="flex items-center">
@@ -270,11 +274,9 @@ export default function ListingForm() {
             </div>
           </div>
         </FormSection>
-
         <FormSection>
           <LocationAutocomplete formik={formik} />
         </FormSection>
-
         <FormSection>
           <div className="flex items-center">
             <label
@@ -303,7 +305,6 @@ export default function ListingForm() {
             </div>
           </div>
         </FormSection>
-
         <div className="flex justify-end items-center space-x-4 mt-8">
           <Button
             variant="primary"
