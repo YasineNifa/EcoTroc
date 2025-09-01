@@ -5,6 +5,7 @@ from rest_framework_nested import routers
 from api.views import (
     CategoryViewSet,
     ListingViewSet,
+    ListingImageViewSet,
     ProfileView,
     TransactionViewSet,
     ReviewViewSet,
@@ -29,6 +30,7 @@ router.register(r"conversations", ConversationViewSet, basename="conversations")
 router.register(r"categories", CategoryViewSet, basename="categories")
 router.register(r"propositions", PropositionViewSet, basename="proposition")
 router.register(r"notifications", NotificationViewSet, basename="notifications")
+router.register(r"listing-images", ListingImageViewSet, basename="listing-images")
 
 
 conversations_router = routers.NestedSimpleRouter(
