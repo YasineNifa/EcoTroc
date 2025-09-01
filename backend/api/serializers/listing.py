@@ -29,6 +29,10 @@ class ListingSerializer(serializers.ModelSerializer):
     )
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     images = ListingImageSerializer(many=True, read_only=True)
+    uploaded_images = serializers.ListField(
+        child=serializers.ImageField(allow_empty_file=False, use_url=False),
+        write_only=True
+    )
 
 
     class Meta:
@@ -47,7 +51,6 @@ class ListingSerializer(serializers.ModelSerializer):
             "category",
             "status_display",
             "status",
-            "image",
             "number_of_likes",
             "created_at",
             "updated_at",
@@ -56,6 +59,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "latitude",
             "longitude",
             "images",
+            "uploaded_images",
         ]
         read_only_fields = [
             "id",
