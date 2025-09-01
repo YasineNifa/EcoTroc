@@ -1,6 +1,7 @@
 from api.serializers.category import CategorySerializer
 from api.serializers.conversation import ConversationSerializer
 from api.serializers.listing import ListingSerializer
+from api.serializers.listing_image import ListingImageSerializer
 from api.serializers.message import MessageSerializer
 from api.serializers.notification import NotificationSerializer
 from api.serializers.profile import ProfileSerializer
@@ -14,6 +15,7 @@ __all__ = [
     "CategorySerializer",
     "ConversationSerializer",
     "ListingSerializer",
+    "ListingImageSerializer",
     "MessageSerializer",
     "NotificationSerializer",
     "ProfileSerializer",
