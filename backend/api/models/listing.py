@@ -26,7 +26,7 @@ class Listing(models.Model):
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.AVAILABLE
     )
-    image = models.ImageField(upload_to="listings/", blank=True, null=True)
+    # image = models.ImageField(upload_to="listings/", blank=True, null=True)
 
     brand = models.CharField(max_length=100, blank=True)
     size = models.CharField(max_length=50, blank=True)
