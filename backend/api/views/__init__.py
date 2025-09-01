@@ -2,6 +2,7 @@ from api.views.auth import CookieTokenObtainPairView, CookieTokenRefreshView, Lo
 from api.views.category import CategoryViewSet
 from api.views.conversation import ConversationViewSet
 from api.views.listing import ListingUserView, ListingViewSet
+from api.views.listing_image import ListingImageViewSet
 from api.views.message import MessageViewSet
 from api.views.notification import NotificationViewSet
 from api.views.profile import ProfileView, ProfileViewSet
@@ -18,6 +19,7 @@ __all__ = [
     "LogoutView",
     "ListingUserView",
     "ListingViewSet",
+    "ListingImageViewSet",
     "MessageViewSet",
     "NotificationViewSet",
     "ProfileView",
