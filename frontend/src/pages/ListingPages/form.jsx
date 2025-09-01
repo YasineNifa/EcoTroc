@@ -1,31 +1,30 @@
 import { useEffect, useState } from "react";
-import FormSection from "../../components/ui/FormSection";
+import { useFormik } from "formik";
+import { useNavigate, useParams } from "react-router-dom";
+import useRequestResource from "../..//hooks/useRequestResource";
+// UI Components
 import Icon from "../../components/ui/Icon";
 import Button from "../../components/ui/Button";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import useRequestResource from "../../hooks/useRequestResource";
-import { useFormik } from "formik";
 import FormikTextInput from "../../components/ui/FormikTextInput";
 import FormikTextArea from "../../components/ui/FormikTextArea";
-import { useNavigate } from "react-router-dom";
 import Token from "../../components/ui/Token";
-import { useParams } from "react-router-dom";
 import LocationAutocomplete from "../../components/Product/LocationAutocomplete";
 
+// Icons
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import CloseIcon from "@mui/icons-material/Close";
+import FormSection from "../../components/ui/FormSection";
+
 export default function ListingForm() {
-  // --- State for non-Formik values ---
   const { id: listingId } = useParams();
   const isEditMode = Boolean(listingId);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState("");
   const navigate = useNavigate();
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [imageFiles, setImageFiles] = useState([]);
 
   // --- API Hooks ---
   const {
     addResource,
-    error: apiError,
     updateResource,
     resource: listingData,
     getResource,
@@ -58,33 +57,33 @@ export default function ListingForm() {
       latitude: listingData?.latitude || null,
       longitude: listingData?.longitude || null,
     },
-    // --- Basic Validation Example ---
     validate: (values) => {
       const errors = {};
       if (!values.title) errors.title = "Required";
       if (!values.token_value) errors.token_value = "Required";
-      else if (isNaN(values.token_value) || Number(values.token_value) <= 0)
-        errors.token_value = "Must be a positive number";
-      if (!values.category) errors.category = "Please select a category";
-      if (!values.condition) errors.condition = "Please select a condition";
+      // Validation for new listings: check if at least one image has been staged
+      if (
+        !isEditMode &&
+        imageFiles.length === 0 &&
+        imagePreviews.length === 0
+      ) {
+        errors.images = "At least one image is required.";
+      }
       return errors;
     },
-    // --- Submission Handler ---
     onSubmit: (values, { setSubmitting }) => {
       const formData = new FormData();
-
       for (const key in values) {
-        formData.append(key, values[key]);
+        if (values[key] !== null) {
+          formData.append(key, values[key]);
+        }
       }
-
-      if (imageFile) {
-        formData.append("image", imageFile);
+      for (const file of imageFiles) {
+        formData.append("uploaded_images", file);
       }
 
       const handleSuccess = () => {
         formik.resetForm();
-        setImagePreview(null);
-        setImageFile(null);
         setSubmitting(false);
         navigate(isEditMode ? `/listings/${listingId}` : "/");
       };
@@ -97,127 +96,70 @@ export default function ListingForm() {
     },
   });
 
-  // --- Set initial image preview for edit mode ---
   useEffect(() => {
-    if (isEditMode && listingData?.image) {
-      setImagePreview(listingData.image);
+    if (isEditMode && listingData?.images) {
+      setImagePreviews(listingData.images.map((img) => img.image));
     }
   }, [listingData, isEditMode]);
 
-  // --- Image Handling ---
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith("image/")) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-      setAiError("");
-    } else {
-      setAiError("Please select a valid image file.");
-      setImagePreview(null);
-      setImageFile(null);
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      const newPreviews = files.map((file) => URL.createObjectURL(file));
+      setImagePreviews((prev) => [...prev, ...newPreviews]);
+      setImageFiles((prev) => [...prev, ...files]);
     }
   };
 
-  // --- Gemini AI Integration ---
-  const generateDetailsWithAI = async () => {
-    if (!imageFile) {
-      setAiError("Please upload an image first to use the AI feature.");
-      return;
-    }
-    setAiLoading(true);
-    setAiError("");
+  const handleRemoveImage = (indexToRemove) => {
+    const previewToRemove = imagePreviews[indexToRemove];
 
-    const imageSource = imageFile
-      ? URL.createObjectURL(imageFile)
-      : imagePreview;
-
-    // This part needs adjustment if you want AI to work on existing images
-    // For now, it's simplified to work with newly uploaded files
-    if (!imageFile) {
-      setAiError(
-        "AI generation currently only works with newly uploaded images."
-      );
-      setAiLoading(false);
-      return;
+    // Check if the removed image was a new file by looking for its object URL
+    const fileIndex = imageFiles.findIndex(
+      (file) => URL.createObjectURL(file) === previewToRemove
+    );
+    if (fileIndex > -1) {
+      setImageFiles((prev) => prev.filter((_, index) => index !== fileIndex));
     }
 
-    const reader = new FileReader();
-    reader.readAsDataURL(imageFile);
-    reader.onloadend = async () => {
-      const imageBase64 = reader.result.split(",")[1];
-      const prompt = `Analyze this image of an item for a marketplace. Provide a short, catchy title, a detailed description, a suggested price in Tokens, the item's brand, its size (e.g., "M", "L", "One Size"), and a suggested condition from this list: "new_with_tag", "new_without_tag", "very_good", "good", "satisfactory". Return a JSON object with keys: 'title', 'description', 'price', 'brand', 'size', and 'condition'.`;
-
-      try {
-        const apiKey = "";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-        const payload = {
-          contents: [
-            {
-              parts: [
-                { text: prompt },
-                { inlineData: { mimeType: imageFile.type, data: imageBase64 } },
-              ],
-            },
-          ],
-          generationConfig: { responseMimeType: "application/json" },
-        };
-
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!response.ok) throw new Error(`API error: ${response.status}`);
-        const result = await response.json();
-
-        if (result.candidates && result.candidates.length > 0) {
-          const content = JSON.parse(
-            result.candidates[0].content.parts[0].text
-          );
-          formik.setFieldValue("title", content.title || "");
-          formik.setFieldValue("description", content.description || "");
-          formik.setFieldValue("token_value", content.price || "");
-          formik.setFieldValue("brand", content.brand || "");
-          formik.setFieldValue("size", content.size || "");
-          formik.setFieldValue("condition", content.condition || "very_good");
-        } else {
-          throw new Error("No content was generated.");
-        }
-      } catch (err) {
-        console.error("Gemini API Error:", err);
-        setAiError("Failed to generate details. Please try again.");
-      } finally {
-        setAiLoading(false);
-      }
-    };
+    // Always remove the preview
+    setImagePreviews((prev) =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   return (
     <main className="bg-gray-50 py-10">
       <form onSubmit={formik.handleSubmit} className="max-w-4xl mx-auto">
-        <h2 className="text-2xl font-semibold mb-6">Sell your item</h2>
+        <h2 className="text-2xl font-semibold mb-6">
+          {isEditMode ? "Edit your item" : "Sell your item"}
+        </h2>
+
+        {/* --- MULTI-IMAGE UPLOAD SECTION --- */}
         <FormSection>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-            {/* Always keep the file input, but hidden */}
-            <input
-              id="photo-upload"
-              name="image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="hidden"
-            />
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 mb-4">
+              {imagePreviews.map((previewUrl, index) => (
+                <div key={index} className="relative aspect-square">
+                  <img
+                    src={previewUrl}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 leading-none"
+                    aria-label="Remove image"
+                  >
+                    <Icon className="!text-sm">
+                      <CloseIcon fontSize="inherit" />
+                    </Icon>
+                  </button>
+                </div>
+              ))}
+            </div>
 
-            {/* Display the image preview if it exists */}
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Item preview"
-                className="max-h-48 mx-auto mb-4 rounded-md"
-              />
-            )}
-
-            {/* The label now acts as the button and is always visible */}
             <label
               htmlFor="photo-upload"
               className="cursor-pointer inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700"
@@ -225,30 +167,22 @@ export default function ListingForm() {
               <Icon className="mr-2 -ml-1">
                 <AddAPhotoIcon />
               </Icon>
-              {/* Change the button text based on whether an image is already selected */}
-              {imagePreview ? "Change Photo" : "Add Photo"}
+              Add Photos
             </label>
-          </div>
-
-          <div className="mt-4 bg-teal-50 text-teal-800 p-3 rounded-md flex items-center text-sm">
-            <Icon className="mr-2">info</Icon>
-            <span>
-              Attract buyers - use quality photos.{" "}
-              <a href="#" className="font-semibold underline">
-                Discover how
-              </a>
-            </span>
-          </div>
-          <div className="mt-4">
-            <Button
-              onClick={generateDetailsWithAI}
-              disabled={!imageFile || aiLoading}
-              className="w-full md:w-auto"
-              type="button"
-            >
-              {aiLoading ? "Generating..." : "✨ Fill details with AI"}
-            </Button>
-            {aiError && <p className="text-red-500 text-xs mt-2">{aiError}</p>}
+            <input
+              id="photo-upload"
+              name="uploaded_images"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageChange}
+              className="hidden"
+            />
+            {formik.errors.images && (
+              <div className="text-red-500 text-xs mt-2 text-center">
+                {formik.errors.images}
+              </div>
+            )}
           </div>
         </FormSection>
 
@@ -332,11 +266,6 @@ export default function ListingForm() {
                   <option value="good">Good</option>
                   <option value="satisfactory">Satisfactory</option>
                 </select>
-                {formik.touched.condition && formik.errors.condition ? (
-                  <div className="text-red-500 text-xs mt-1">
-                    {formik.errors.condition}
-                  </div>
-                ) : null}
               </div>
             </div>
           </div>
@@ -375,27 +304,7 @@ export default function ListingForm() {
           </div>
         </FormSection>
 
-        {apiError && (
-          <p className="text-red-500 text-sm mb-4 text-center">{apiError}</p>
-        )}
-
-        <div className="border border-gray-200 rounded-lg p-4 mb-6 flex justify-between items-center">
-          {" "}
-          <p className="text-sm text-gray-600">
-            What do you think of our new listing process?
-          </p>{" "}
-          <Button variant="secondary">Give feedback</Button>{" "}
-        </div>
-        <p className="text-xs text-gray-500 mb-6">
-          A professional seller must register as a professional on EcoTroc and
-          is subject to the sections provided in Terms 1, T&C 2, and the
-          Consumer Code.
-        </p>
-
-        <div className="flex justify-end items-center space-x-4">
-          <Button variant="secondary" type="button">
-            Save draft
-          </Button>
+        <div className="flex justify-end items-center space-x-4 mt-8">
           <Button
             variant="primary"
             type="submit"
@@ -404,8 +313,8 @@ export default function ListingForm() {
             {formik.isSubmitting
               ? "Submitting..."
               : isEditMode
-              ? "Update"
-              : "Add"}
+              ? "Update Listing"
+              : "Add Listing"}
           </Button>
         </div>
       </form>
