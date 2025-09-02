@@ -1,4 +1,4 @@
-from api.serializers.brand import BrandSerializer
+from api.serializers.brand import BrandSerializer, BrandRelatedField
 from api.serializers.category import CategorySerializer
 from api.serializers.conversation import ConversationSerializer
 from api.serializers.listing import ListingSerializer
@@ -13,6 +13,7 @@ from api.serializers.user import UserSerializer
 
 
 __all__ = [
+    "BrandRelatedField",
     "BrandSerializer",
     "CategorySerializer",
     "ConversationSerializer",
