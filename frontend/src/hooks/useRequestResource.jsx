@@ -25,7 +25,7 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
   );
 
   const getResourceList = useCallback(
-    ({ query = "" } = {}) => {
+    ({ query = "" } = {}, successCallback) => {
       setLoading(true);
       apiClient
         .get(`/${endpoint}/${query}`, getCommonOptions())
@@ -38,6 +38,9 @@ export default function useRequestResource({ endpoint, resourceLabel }) {
             setResourceList({
               results: res.data,
             });
+          }
+          if (successCallback) {
+            successCallback();
           }
         })
         .catch(handleRequestResourceError);
