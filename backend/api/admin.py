@@ -1,5 +1,6 @@
 from django.contrib import admin
 from api.models import (
+    Brand,
     Category,
     Conversation,
     Listing,
@@ -13,6 +14,7 @@ from api.models import (
 )
 
 
+admin.site.register(Brand)
 admin.site.register(Category)
 admin.site.register(Conversation)
 admin.site.register(Listing)
