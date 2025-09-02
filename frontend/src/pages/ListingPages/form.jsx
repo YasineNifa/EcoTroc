@@ -15,6 +15,7 @@ import LocationAutocomplete from "../../components/Product/LocationAutocomplete"
 // Icons
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import CloseIcon from "@mui/icons-material/Close";
+import BrandAutocomplete from "../../components/Product/BrandAutocomplete";
 
 export default function ListingForm() {
   const { id: listingId } = useParams();
@@ -49,7 +50,7 @@ export default function ListingForm() {
       title: listingData?.title || "",
       description: listingData?.description || "",
       category: listingData?.category || "",
-      brand: listingData?.brand || "",
+      brand_id: listingData?.brand_id || "",
       token_value: listingData?.token_value || "",
       condition: listingData?.condition || "very_good",
       size: listingData?.size || "",
@@ -238,13 +239,6 @@ export default function ListingForm() {
             <hr />
             <FormikTextInput
               formik={formik}
-              label="Brand"
-              name="brand"
-              placeholder="e.g. Nike, Sézane, etc."
-            />
-            <hr />
-            <FormikTextInput
-              formik={formik}
               label="Size"
               name="size"
               placeholder="e.g. M, 42, One Size"
@@ -276,6 +270,9 @@ export default function ListingForm() {
         </FormSection>
         <FormSection>
           <LocationAutocomplete formik={formik} />
+        </FormSection>
+        <FormSection>
+          <BrandAutocomplete formik={formik} />
         </FormSection>
         <FormSection>
           <div className="flex items-center">
