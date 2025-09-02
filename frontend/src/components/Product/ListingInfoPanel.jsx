@@ -60,7 +60,7 @@ const ListingHeader = ({ listing, finalPrice }) => (
 // --- Sub-component for the Details Grid ---
 const DetailsGrid = ({ listing }) => {
   const details = [
-    { label: "Brand", value: listing?.brand },
+    { label: "Brand", value: listing?.brand?.name },
     { label: "Size", value: listing?.size },
     { label: "Condition", value: listing?.condition_display },
     { label: "Color", value: listing?.color },
