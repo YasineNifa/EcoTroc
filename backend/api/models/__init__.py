@@ -1,3 +1,4 @@
+from api.models.brand import Brand
 from api.models.category import Category
 from api.models.conversation import Conversation
 from api.models.listing import Listing
@@ -11,6 +12,7 @@ from api.models.transaction import Transaction
 
 
 __all__ = [
+    "Brand",
     "Category",
     "Conversation",
     "Listing",
