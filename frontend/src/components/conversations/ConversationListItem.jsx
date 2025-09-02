@@ -14,24 +14,14 @@ const ConversationListItem = ({
         isActive ? "bg-gray-100" : "hover:bg-gray-50"
       }`}
     >
-      {conversation.listing.image ? (
-        <img
-          src={
-            otherParticipant.image ||
-            `https://placehold.co/40x40/E2E8F0/4A5568?text=${otherParticipant.user.username}`
-          }
-          alt="Image"
-          className="w-12 h-12 rounded-full flex-shrink-0"
-        />
-      ) : (
-        <div
-          className={`w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xl ${
-            "bg-green-500" || "bg-gray-400"
-          }`}
-        >
-          {otherParticipant.user.username}
-        </div>
-      )}
+      <img
+        src={
+          otherParticipant.image ||
+          `https://placehold.co/40x40/E2E8F0/4A5568?text=${otherParticipant.user.username}`
+        }
+        alt="Image"
+        className="w-12 h-12 rounded-full flex-shrink-0"
+      />
 
       <div className="flex-1 overflow-hidden">
         <div className="flex justify-between items-center">
@@ -58,7 +48,11 @@ const ConversationListItem = ({
           </p>
           <div className="w-[20%] flex justify-between items-center">
             <img
-              src={conversation.listing.image}
+              src={
+                conversation.listing.images
+                  ? conversation.listing.images[0].image
+                  : ""
+              }
               alt="item"
               className="w-8 h-8 rounded-sm flex-shrink-0"
             />
