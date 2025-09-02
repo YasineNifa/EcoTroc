@@ -50,7 +50,7 @@ export default function ListingForm() {
       title: listingData?.title || "",
       description: listingData?.description || "",
       category: listingData?.category || "",
-      brand_id: listingData?.brand_id || "",
+      brand: listingData?.brand || "",
       token_value: listingData?.token_value || "",
       condition: listingData?.condition || "very_good",
       size: listingData?.size || "",
