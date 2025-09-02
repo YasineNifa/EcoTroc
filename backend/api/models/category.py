@@ -15,13 +15,3 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
-    # class Category(models.TextChoices):
-    #     WOMEN = "women", "Women"
-    #     MEN = "men", "Men"
-    #     KIDS = "kids", "Kids"
-    #     HOME = "home", "Home"
-    #     ELECTRONICS = "electronics", "Electronics"
-    #     ENTERTAINMENT = "entertainment", "Entertainment"
-    #     HOBBIES = "hobbies", "Hobbies & collectibles"
-    #     SPORTS = "sports", "Sports"
