@@ -36,7 +36,7 @@ const TransactionList = ({ selectedTransactionId, onTransactionSelect }) => {
             >
               <img
                 src={
-                  transaction.listing.image ||
+                  transaction.listing.images?.[0]?.image ||
                   "[https://via.placeholder.com/40x40.png](https://via.placeholder.com/40x40.png)"
                 }
                 alt="Listing"

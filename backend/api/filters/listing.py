@@ -5,7 +5,7 @@ from api.models import Listing
 
 
 class ListingFilter(filters.FilterSet):
-    liked_by_user = filters.BooleanFilter(method="filter_liked_by_user")
+    liked_by_user = filters.BooleanFilter(method="filter_liked_by_user", label="Liked by User")
 
     class Meta:
         model = Listing

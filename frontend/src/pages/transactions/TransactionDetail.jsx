@@ -83,7 +83,7 @@ const TransactionDetail = ({ transactionId, onActionSuccess }) => {
             className="flex items-center mt-1 group"
           >
             <img
-              src={transaction.listing.image}
+              src={transaction.listing.images[0].image}
               alt={transaction.listing.title}
               className="w-full h-64 object-contain rounded-lg mb-4"
             />
