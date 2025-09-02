@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from api.models.brand import Brand
 from api.models.listing import Listing
+from api.serializers.brand import BrandSerializer
 from api.serializers.listing_image import ListingImageSerializer
 from api.serializers.profile import ProfileSerializer
 
@@ -37,6 +38,7 @@ class ListingSerializer(serializers.ModelSerializer):
     brand_id = serializers.PrimaryKeyRelatedField(
         queryset=Brand.objects.all(), source='brand', write_only=True, allow_null=True
     )
+    brand = BrandSerializer(read_only=True)
 
 
     class Meta:
