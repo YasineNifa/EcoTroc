@@ -26,9 +26,6 @@ class Listing(models.Model):
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.AVAILABLE
     )
-    # image = models.ImageField(upload_to="listings/", blank=True, null=True)
-
-    brand = models.CharField(max_length=100, blank=True)
     size = models.CharField(max_length=50, blank=True)
     condition = models.CharField(
         max_length=50, choices=Condition.choices, default=Condition.VERY_GOOD
@@ -46,6 +43,7 @@ class Listing(models.Model):
     location = models.CharField(max_length=255, blank=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
+    brand = models.ForeignKey("Brand", on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.title
