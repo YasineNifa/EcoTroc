@@ -30,36 +30,34 @@ function BrandAutocomplete({ formik }) {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
-    formik.setFieldValue("brand_id", null);
+    formik.setFieldValue("brand", value);
     debouncedFetch(value);
   };
 
   const handleSuggestionClick = (suggestion) => {
-    formik.setFieldValue("brand_id", suggestion.id);
+    formik.setFieldValue("brand", suggestion.id);
     setSuggestions([]);
     setInputValue(suggestion.name);
   };
 
   return (
     <div className="relative flex items-center">
-      <label htmlFor="brand_id" className="w-1/4 text-sm text-gray-600">
+      <label htmlFor="brand" className="w-1/4 text-sm text-gray-600">
         Brand
       </label>
       <div className="w-3/4 flex flex-col">
         <input
           type="text"
-          id="brand_id"
-          name="brand_id"
+          id="brand"
+          name="brand"
           placeholder="e.g. Nike, Sézane, etc."
           value={inputValue}
           onChange={handleInputChange}
           autoComplete="off"
           className="p-2 border-b border-gray-300  focus:border-teal-500 focus:outline-none"
         />
-        {formik.touched.brand_id && formik.errors.brand_id ? (
-          <div className="text-red-500 text-xs mt-1">
-            {formik.errors.brand_id}
-          </div>
+        {formik.touched.brand && formik.errors.brand ? (
+          <div className="text-red-500 text-xs mt-1">{formik.errors.brand}</div>
         ) : null}
 
         {suggestions.length > 0 && (
