@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from api.models import Listing
+from api.models.brand import Brand
+from api.models.listing import Listing
+from api.serializers.brand import BrandRelatedField
 from api.serializers.listing_image import ListingImageSerializer
 from api.serializers.profile import ProfileSerializer
 
@@ -33,6 +35,11 @@ class ListingSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(allow_empty_file=False, use_url=False),
         write_only=True
     )
+    # brand_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=Brand.objects.all(), source='brand', write_only=True, allow_null=True
+    # )
+    # brand = BrandSerializer(read_only=True)
+    brand = BrandRelatedField(queryset=Brand.objects.all(), allow_null=True, required=False)
 
 
     class Meta:
@@ -44,6 +51,7 @@ class ListingSerializer(serializers.ModelSerializer):
             "token_value",
             "owner",
             "brand",
+            # "brand_id",
             "size",
             "condition",
             "condition_display",
