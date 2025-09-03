@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
-import apiClient from "../services/api"; // Make sure you have a centralized apiClient
-import ItemCard from "./shared/ItemCard"; // Your existing ItemCard component
+import { useSearchParams } from "react-router-dom";
+import apiClient from "../services/api";
+import ItemCard from "./shared/ItemCard";
 import getCommonOptions from "../helpers/axios/getCommonOptions";
 
 const ListingsPage = () => {
   const [listings, setListings] = useState([]);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true); // To know if there are more pages
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search");
 
   // Ref for the IntersectionObserver
   const observer = useRef();
@@ -17,7 +19,7 @@ const ListingsPage = () => {
   // This callback attaches the observer to the last item in the list
   const lastListingElementRef = useCallback(
     (node) => {
-      if (loading) return; // Don't do anything if we're already loading
+      if (loading) return;
       if (observer.current) observer.current.disconnect(); // Disconnect old observer
 
       observer.current = new IntersectionObserver((entries) => {
@@ -32,31 +34,32 @@ const ListingsPage = () => {
     [loading, hasMore]
   );
 
-  // This effect fetches data whenever the 'page' state changes
   useEffect(() => {
+    setListings([]);
+    setPage(1);
+    setHasMore(true);
+    setError(null);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (!hasMore || loading) return;
+
     const fetchListings = async () => {
       setLoading(true);
       setError(null);
+      const query = searchQuery ? `&search=${searchQuery}` : "";
       try {
         const response = await apiClient.get(
-          `/listings/?page=${page}&status=available`,
+          `/listings/?page=${page}&status=available${query}`,
           getCommonOptions()
         );
-
-        // Append new listings to the existing list
-        setListings((prevListings) => {
-          // Prevent duplicates by checking if the item already exists
+        setListings((prev) => {
           const newItems = response.data.results.filter(
-            (newItem) =>
-              !prevListings.some((prevItem) => prevItem.id === newItem.id)
+            (newItem) => !prev.some((prevItem) => prevItem.id === newItem.id)
           );
-          return [...prevListings, ...newItems];
+          return [...prev, ...newItems];
         });
-
-        // If the API response's 'next' field is null, we've reached the end
-        if (response.data.next === null) {
-          setHasMore(false);
-        }
+        setHasMore(response.data.next !== null);
       } catch (err) {
         setError("Failed to fetch listings.");
         console.error(err);
@@ -65,10 +68,8 @@ const ListingsPage = () => {
       }
     };
 
-    if (hasMore) {
-      fetchListings();
-    }
-  }, [page]);
+    fetchListings();
+  }, [page, searchQuery, hasMore]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,17 +79,11 @@ const ListingsPage = () => {
           if (listings.length === index + 1) {
             return (
               <div ref={lastListingElementRef} key={item.id}>
-                <Link to={`/listings/${item.id}`}>
-                  <ItemCard item={item} />
-                </Link>
+                <ItemCard item={item} />
               </div>
             );
           } else {
-            return (
-              <Link key={item.id} to={`/listings/${item.id}`}>
-                <ItemCard item={item} />
-              </Link>
-            );
+            return <ItemCard key={item.id} item={item} />;
           }
         })}
       </div>
