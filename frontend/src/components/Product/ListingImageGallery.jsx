@@ -73,7 +73,7 @@ const ListingImageGallery = ({ images = [], status }) => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[60vh] max-h-[900px]">
+        <div className="grid grid-cols-2 grid-rows-3 gap-2 h-[60vh] max-h-[900px]">
           <div className="col-span-1 row-span-2 group">
             <img
               src={mainImage.image}
@@ -135,11 +135,19 @@ const ListingImageGallery = ({ images = [], status }) => {
             <ChevronLeftIcon />
           </button>
 
-          <div className="relative max-w-4xl max-h-[90vh] p-4">
+          <div
+            className="relative w-[90vw] h-[90vh] max-w-[1200px] max-h-[80vh] flex items-center justify-center"
+            // onClick={(e) => e.stopPropagation()} // Click on the blank area should close the lightbox
+          >
             <img
               src={images[currentImageIndex].image}
               alt={`Listing image ${currentImageIndex + 1}`}
-              className="max-w-full max-h-full object-contain"
+              className="block max-w-full max-h-full object-contain"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src =
+                  "https://placehold.co/1200x800/e2e8f0/4a5568?text=Image+Not+Found";
+              }}
             />
             {!isAvailable && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-auto bg-slate-800 bg-opacity-80 py-1.5 px-4 rounded-md text-center z-10">
