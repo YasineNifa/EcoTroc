@@ -3,6 +3,7 @@ from rest_framework import serializers
 from api.models.brand import Brand
 from api.models.listing import Listing
 from api.serializers.brand import BrandRelatedField
+from api.serializers.category import CategorySerializer
 from api.serializers.listing_image import ListingImageSerializer
 from api.serializers.profile import ProfileSerializer
 
@@ -26,20 +27,19 @@ class ListingSerializer(serializers.ModelSerializer):
     condition_display = serializers.CharField(
         source="get_condition_display", read_only=True
     )
-    category_display = serializers.CharField(
-        source="get_category_display", read_only=True
-    )
+    category = CategorySerializer(read_only=True)
+    category_display = serializers.CharField(source="category.name", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     images = ListingImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
         child=serializers.ImageField(allow_empty_file=False, use_url=False),
         write_only=True
     )
+    brand = BrandRelatedField(queryset=Brand.objects.all(), allow_null=True, required=False)
     # brand_id = serializers.PrimaryKeyRelatedField(
     #     queryset=Brand.objects.all(), source='brand', write_only=True, allow_null=True
     # )
     # brand = BrandSerializer(read_only=True)
-    brand = BrandRelatedField(queryset=Brand.objects.all(), allow_null=True, required=False)
 
 
     class Meta:
