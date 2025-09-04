@@ -49,7 +49,7 @@ export default function ListingForm() {
     initialValues: {
       title: listingData?.title || "",
       description: listingData?.description || "",
-      category: listingData?.category || "",
+      category_id: listingData?.category_id || "",
       brand: listingData?.brand || "",
       token_value: listingData?.token_value || "",
       condition: listingData?.condition || "very_good",
@@ -212,14 +212,17 @@ export default function ListingForm() {
         <FormSection>
           <div className="space-y-4">
             <div className="flex items-center">
-              <label htmlFor="category" className="w-1/4 text-sm text-gray-600">
+              <label
+                htmlFor="category_id"
+                className="w-1/4 text-sm text-gray-600"
+              >
                 Category
               </label>
               <div className="w-3/4 flex flex-col">
                 <select
-                  id="category"
-                  name="category"
-                  {...formik.getFieldProps("category")}
+                  id="category_id"
+                  name="category_id"
+                  {...formik.getFieldProps("category_id")}
                   className="p-2 border-b border-gray-300 focus:border-teal-500 focus:outline-none bg-transparent"
                 >
                   <option value="">Select a category</option>
@@ -229,9 +232,9 @@ export default function ListingForm() {
                     </option>
                   ))}
                 </select>
-                {formik.touched.category && formik.errors.category ? (
+                {formik.touched.category_id && formik.errors.category_id ? (
                   <div className="text-red-500 text-xs mt-1">
-                    {formik.errors.category}
+                    {formik.errors.category_id}
                   </div>
                 ) : null}
               </div>

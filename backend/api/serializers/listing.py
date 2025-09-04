@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from api.models.brand import Brand
+from api.models.category import Category
 from api.models.listing import Listing
 from api.serializers.brand import BrandRelatedField
 from api.serializers.listing_image import ListingImageSerializer
@@ -26,20 +27,21 @@ class ListingSerializer(serializers.ModelSerializer):
     condition_display = serializers.CharField(
         source="get_condition_display", read_only=True
     )
-    category_display = serializers.CharField(
-        source="get_category_display", read_only=True
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), source='category', write_only=True, allow_null=True
     )
+    category_display = serializers.CharField(source="category.name", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     images = ListingImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
         child=serializers.ImageField(allow_empty_file=False, use_url=False),
         write_only=True
     )
+    brand = BrandRelatedField(queryset=Brand.objects.all(), allow_null=True, required=False)
     # brand_id = serializers.PrimaryKeyRelatedField(
     #     queryset=Brand.objects.all(), source='brand', write_only=True, allow_null=True
     # )
     # brand = BrandSerializer(read_only=True)
-    brand = BrandRelatedField(queryset=Brand.objects.all(), allow_null=True, required=False)
 
 
     class Meta:
@@ -51,12 +53,11 @@ class ListingSerializer(serializers.ModelSerializer):
             "token_value",
             "owner",
             "brand",
-            # "brand_id",
             "size",
             "condition",
             "condition_display",
             "category_display",
-            "category",
+            "category_id",
             "status_display",
             "status",
             "number_of_likes",

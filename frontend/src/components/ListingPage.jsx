@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import apiClient from "../services/api";
 import ItemCard from "./shared/ItemCard";
 import getCommonOptions from "../helpers/axios/getCommonOptions";
+import BrandFilter from "./Product/BrandFilter";
+import CategoryFilter from "./Product/CategoryFilter";
 
 const ListingsPage = () => {
   const [listings, setListings] = useState([]);
@@ -12,6 +14,9 @@ const ListingsPage = () => {
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("search");
+  const brandQuery = searchParams.get("brand");
+  const categoryQuery = searchParams.get("category");
+
 
   // Ref for the IntersectionObserver
   const observer = useRef();
@@ -39,7 +44,7 @@ const ListingsPage = () => {
     setPage(1);
     setHasMore(true);
     setError(null);
-  }, [searchQuery]);
+  }, [searchQuery, brandQuery, categoryQuery]);
 
   useEffect(() => {
     if (!hasMore || loading) return;
@@ -47,10 +52,18 @@ const ListingsPage = () => {
     const fetchListings = async () => {
       setLoading(true);
       setError(null);
-      const query = searchQuery ? `&search=${searchQuery}` : "";
+
+      const params = new URLSearchParams({
+        page: page.toString(),
+        status: "available",
+      });
+      if (searchQuery) params.set("search", searchQuery);
+      if (brandQuery) params.set("brand", brandQuery);
+      if (categoryQuery) params.set("category", categoryQuery);
+
       try {
         const response = await apiClient.get(
-          `/listings/?page=${page}&status=available${query}`,
+          `/listings/?${params.toString()}`,
           getCommonOptions()
         );
         setListings((prev) => {
@@ -69,13 +82,16 @@ const ListingsPage = () => {
     };
 
     fetchListings();
-  }, [page, searchQuery, hasMore]);
+  }, [page, searchQuery, brandQuery, hasMore]);
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-start items-center mb-4 gap-3">
+        <BrandFilter />
+        <CategoryFilter/>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {listings.map((item, index) => {
-          // If this is the last item, attach the ref to it
           if (listings.length === index + 1) {
             return (
               <div ref={lastListingElementRef} key={item.id}>
@@ -88,7 +104,6 @@ const ListingsPage = () => {
         })}
       </div>
 
-      {/* UI Feedback for the user */}
       {loading && <p className="text-center mt-8">Loading more items...</p>}
       {error && <p className="text-center text-red-500 mt-8">{error}</p>}
       {!hasMore && (
