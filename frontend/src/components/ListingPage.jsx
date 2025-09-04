@@ -4,6 +4,7 @@ import apiClient from "../services/api";
 import ItemCard from "./shared/ItemCard";
 import getCommonOptions from "../helpers/axios/getCommonOptions";
 import BrandFilter from "./Product/BrandFilter";
+import CategoryFilter from "./Product/CategoryFilter";
 
 const ListingsPage = () => {
   const [listings, setListings] = useState([]);
@@ -14,6 +15,8 @@ const ListingsPage = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("search");
   const brandQuery = searchParams.get("brand");
+  const categoryQuery = searchParams.get("category");
+
 
   // Ref for the IntersectionObserver
   const observer = useRef();
@@ -41,7 +44,7 @@ const ListingsPage = () => {
     setPage(1);
     setHasMore(true);
     setError(null);
-  }, [searchQuery, brandQuery]);
+  }, [searchQuery, brandQuery, categoryQuery]);
 
   useEffect(() => {
     if (!hasMore || loading) return;
@@ -56,6 +59,8 @@ const ListingsPage = () => {
       });
       if (searchQuery) params.set("search", searchQuery);
       if (brandQuery) params.set("brand", brandQuery);
+      if (categoryQuery) params.set("category", categoryQuery);
+
       try {
         const response = await apiClient.get(
           `/listings/?${params.toString()}`,
@@ -81,8 +86,9 @@ const ListingsPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-start items-center mb-4 gap-3">
         <BrandFilter />
+        <CategoryFilter/>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {listings.map((item, index) => {
