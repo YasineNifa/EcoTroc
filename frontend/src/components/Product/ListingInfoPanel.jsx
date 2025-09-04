@@ -64,6 +64,7 @@ const DetailsGrid = ({ listing }) => {
     { label: "Size", value: listing?.size },
     { label: "Condition", value: listing?.condition_display },
     { label: "Color", value: listing?.color },
+    { label: "Category", value: listing?.category_display },
   ];
 
   return (
