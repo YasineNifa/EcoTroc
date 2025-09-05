@@ -4,12 +4,15 @@ from django.db.models import Case, When, Value, CharField
 
 from api.models import Brand
 
+
 class BrandFilter(django_filters.FilterSet):
-    name_search = django_filters.CharFilter(method='filter_by_relevance', label="Search by brand name with relevance")
+    name_search = django_filters.CharFilter(
+        method="filter_by_relevance", label="Search by brand name with relevance"
+    )
 
     class Meta:
         model = Brand
-        fields = ['name_search']
+        fields = ["name_search"]
 
     def filter_by_relevance(self, queryset, name, value):
         """
@@ -25,6 +28,6 @@ class BrandFilter(django_filters.FilterSet):
                 When(name__iexact=value, then=Value(1)),
                 When(name__istartswith=value, then=Value(2)),
                 default=Value(3),
-                output_field=CharField()
+                output_field=CharField(),
             )
-        ).order_by('relevance', 'name')
+        ).order_by("relevance", "name")

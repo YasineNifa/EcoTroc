@@ -6,7 +6,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.filters.listing import ListingFilter
-from api.models import Listing, Transaction, Conversation, Message, Proposition, ListingImage
+from api.models import (
+    Listing,
+    Transaction,
+    Conversation,
+    Message,
+    Proposition,
+    ListingImage,
+)
 from api.serializers import (
     ListingSerializer,
     TransactionSerializer,
@@ -35,20 +42,22 @@ class ListingViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)        
-        image_data = serializer.validated_data.pop('uploaded_images')        
-        listing = serializer.save(owner=request.user.profile)        
+        serializer.is_valid(raise_exception=True)
+        image_data = serializer.validated_data.pop("uploaded_images")
+        listing = serializer.save(owner=request.user.profile)
         for image in image_data:
             ListingImage.objects.create(listing=listing, image=image)
-            
+
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        image_data = serializer.validated_data.pop('uploaded_images', None)
+        image_data = serializer.validated_data.pop("uploaded_images", None)
         self.perform_update(serializer)
         if image_data:
             for image in image_data:

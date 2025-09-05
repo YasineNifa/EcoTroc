@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ListingImage(models.Model):
     listing = models.ForeignKey(
         "Listing", on_delete=models.CASCADE, related_name="images"
