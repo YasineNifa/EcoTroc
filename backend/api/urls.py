@@ -5,6 +5,7 @@ from rest_framework_nested import routers
 from api.views import (
     BrandViewSet,
     CategoryViewSet,
+    CountryListView,
     ListingViewSet,
     ListingImageViewSet,
     ProfileView,
@@ -52,5 +53,6 @@ urlpatterns = [
     path("token/", CookieTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", CookieTokenRefreshView.as_view(), name="token_refresh"),
     path("logout/", LogoutView.as_view(), name="logout"),
+    path('countries/', CountryListView.as_view(), name='country-list'),
 ]
 # urlpatterns += router.urls
