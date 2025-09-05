@@ -11,6 +11,7 @@ import ProfilePage from "./pages/ProfilePage/profile";
 import ListingDetailPage from "./pages/ListingPages/detail";
 import MessagesPage from "./pages/MessagePages/Message";
 import TransactionsPage from "./pages/transactions/TransactionPage";
+import ProfileSettings from "./pages/ProfilePage/ProfileSettings";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/favorite-listings" element={<FavoriteList />} />
             <Route path="/messages" element={<MessagesPage />} />
             <Route path="/profiles/:id" element={<ProfilePage />} />
+            <Route path="/settings/profile" element={<ProfileSettings />} />
             <Route
               path="/messages/:conversationId"
               element={<MessagesPage />}
