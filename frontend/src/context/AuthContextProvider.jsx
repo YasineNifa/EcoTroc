@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useState, createContext, useCallback } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+  createContext,
+  useCallback,
+} from "react";
 import apiClient from "../services/api";
 
 export const AuthContext = createContext();
@@ -14,13 +20,16 @@ export default function AuthContextProvider({ children }) {
     try {
       const response = await apiClient.get("/profile/me/");
       const userProfile = response.data;
-      
+
       console.log("AuthContext: User fetch successful.", userProfile);
       setProfile(userProfile);
       setUser(userProfile.user);
       setIsAuthenticated(true);
     } catch (error) {
-      console.log("AuthContext: User fetch failed. User is not authenticated.");
+      console.log(
+        "AuthContext: User fetch failed. User is not authenticated.",
+        error
+      );
       setUser(null);
       setProfile(null);
       setIsAuthenticated(false);
@@ -38,16 +47,19 @@ export default function AuthContextProvider({ children }) {
     checkAuthStatus();
   }, [fetchUser]);
 
-  const providerValue = useMemo(() => ({
-    isAuthenticated,
-    user,
-    profile,
-    isLoading,
-    fetchUser,
-    setIsAuthenticated,
-    setUser,
-    setProfile,
-  }), [isAuthenticated, user, profile, isLoading, fetchUser]);
+  const providerValue = useMemo(
+    () => ({
+      isAuthenticated,
+      user,
+      profile,
+      isLoading,
+      fetchUser,
+      setIsAuthenticated,
+      setUser,
+      setProfile,
+    }),
+    [isAuthenticated, user, profile, isLoading, fetchUser]
+  );
 
   return (
     <AuthContext.Provider value={providerValue}>
