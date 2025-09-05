@@ -2,6 +2,7 @@ import { useState } from "react";
 import BioGeneratorModal from "../geminiPowered/BioGeneratorModal";
 import Button from "../ui/Button";
 import StarRating from "../reviews/StarRating";
+import { Link } from "react-router-dom";
 
 const ProfileHeader = ({
   profile,
@@ -41,9 +42,11 @@ const ProfileHeader = ({
             <div>
               {profile?.id === navigaterProfile?.id && (
                 <>
-                  <Button variant="secondary" className="mr-1">
-                    Edit Profile
-                  </Button>
+                  <Link to="/settings/profile">
+                    <Button variant="secondary" className="mr-1">
+                      Edit Profile
+                    </Button>
+                  </Link>
                   <Button
                     variant="secondary"
                     onClick={() => setBioModalOpen(true)}
