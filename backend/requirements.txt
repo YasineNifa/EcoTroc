@@ -28,7 +28,7 @@ channels-redis
 daphne
 gunicorn
 dj-database-url
-
+django-countries
 
 
 # Au debut
