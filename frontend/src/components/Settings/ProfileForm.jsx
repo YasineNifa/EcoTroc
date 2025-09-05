@@ -2,23 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import UserCircleIcon from "../../components/ui/UserIconCircle";
 import { AuthContext } from "../../context/AuthContextProvider";
 import { useFormik } from "formik";
-// import useRequestResource from "../../hooks/useRequestResource";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../services/api";
 
 function ProfileForm() {
   const navigate = useNavigate();
   const { user, profile, setUser, setProfile } = useContext(AuthContext);
-  //   const { updateResource } = useRequestResource({
-  //     endpoint: "profiles",
-  //     resourceLabel: "Profile",
-  //   });
-
-  //   const [country, setCountry] = useState("France");
-  //   const [city, setCity] = useState("Arnouville");
-  //   const [language, setLanguage] = useState("French");
-  //   const [showCity, setShowCity] = useState(true);
   const [profileImage, setProfileImage] = useState(null);
+  const [countries, setCountries] = useState([]);
+
   const handleImageChange = (e) => {
     const file = e.currentTarget.files[0];
     if (file) {
@@ -26,13 +18,12 @@ function ProfileForm() {
       setProfileImage(URL.createObjectURL(file));
     }
   };
-  //   const countries = ["France", "Belgique", "Suisse", "Canada"];
-  //   const cities = ["Paris", "Lyon", "Marseille", "Arnouville"];
-  //   const languages = [
-  //     "Français (French)",
-  //     "Anglais (English)",
-  //     "Espagnol (Spanish)",
-  //   ];
+
+  useEffect(() => {
+    apiClient.get("/countries/").then((res) => {
+      setCountries(res.data);
+    });
+  }, []);
 
   useEffect(() => {
     setProfileImage(profile?.image);
@@ -45,6 +36,10 @@ function ProfileForm() {
       username: user?.username,
       first_name: user?.first_name,
       last_name: user?.last_name,
+      phone_number: profile?.phone_number,
+      country: profile?.country,
+      city: profile?.city,
+      show_city_in_profile: profile?.show_city_in_profile,
     },
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
@@ -56,6 +51,11 @@ function ProfileForm() {
       formData.append("user.username", values.username);
       formData.append("user.first_name", values.first_name);
       formData.append("user.last_name", values.last_name);
+
+      formData.append("country", values.country);
+      formData.append("city", values.city);
+      formData.append("show_city_in_profile", values.show_city_in_profile);
+      formData.append("phone_number", values.phone_number);
 
       await apiClient.patch("/profile/me/", formData).then((res) => {
         console.log("res: ", res);
@@ -70,6 +70,10 @@ function ProfileForm() {
           ...profile,
           bio: values.bio,
           image: profileImage,
+          country: values.country,
+          city: values.city,
+          show_city_in_profile: values.show_city_in_profile,
+          phone_number: values.phone_number,
         });
         navigate("/");
       });
@@ -158,6 +162,22 @@ function ProfileForm() {
               className="w-full p-2 border border-gray-300 rounded-md"
             />
           </div>
+          <div>
+            <label
+              htmlFor="phone_number"
+              className="block text-sm font-semibold text-gray-700 mb-2"
+            >
+              Phone number
+            </label>
+            <input
+              type="text"
+              id="phone_number"
+              name="phone_number"
+              value={formik.values.phone_number}
+              onChange={formik.handleChange}
+              className="w-full p-2 border border-gray-300 rounded-md"
+            />
+          </div>
         </div>
 
         <div className="py-6">
@@ -180,62 +200,77 @@ function ProfileForm() {
       </div>
 
       {/* --- Section Localisation --- */}
-      {/* <div className="bg-white p-6 rounded-lg border border-gray-200">
+      <div className="bg-white p-6 rounded-lg border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Ma position
+          My position
         </h3>
-        <div className="space-y-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Pays
+            <label
+              htmlFor="country"
+              className="block text-sm font-semibold text-gray-700 mb-1"
+            >
+              Country
             </label>
             <select
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
+              id="country"
+              name="country"
+              value={formik.values.country}
+              onChange={formik.handleChange}
               className="w-full p-2 border border-gray-300 rounded-md"
             >
+              <option value="">Choose your country</option>
               {countries.map((c) => (
-                <option key={c} value={c}>
-                  {c}
+                <option key={c.code} value={c.code}>
+                  {c.name}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Ville
+            <label
+              htmlFor="city"
+              className="block text-sm font-semibold text-gray-700 mb-1"
+            >
+              City
             </label>
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
+            <input
+              type="text"
+              id="city"
+              name="city"
+              value={formik.values.city}
+              onChange={formik.handleChange}
               className="w-full p-2 border border-gray-300 rounded-md"
-            >
-              {cities.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center justify-between pt-2">
-            <span className="text-sm font-semibold text-gray-700">
-              Afficher la ville dans le profil
-            </span>
-            <button
-              onClick={() => setShowCity(!showCity)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                showCity ? "bg-blue-600" : "bg-gray-200"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  showCity ? "translate-x-6" : "translate-x-1"
-                }`}
-              />
-            </button>
+            />
           </div>
         </div>
-      </div> */}
+        <div className="flex items-center justify-between pt-6 mt-4 border-t border-gray-200">
+          <span className="text-sm font-semibold text-gray-700">
+            Display the city in my profile
+          </span>
+          <button
+            type="button"
+            onClick={() =>
+              formik.setFieldValue(
+                "show_city_in_profile",
+                !formik.values.show_city_in_profile
+              )
+            }
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              formik.values.show_city_in_profile ? "bg-blue-600" : "bg-gray-200"
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                formik.values.show_city_in_profile
+                  ? "translate-x-6"
+                  : "translate-x-1"
+              }`}
+            />
+          </button>
+        </div>
+      </div>
 
       {/* <div className="bg-white p-6 rounded-lg border border-gray-200">
         <div>
