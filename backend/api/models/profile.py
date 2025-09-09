@@ -22,6 +22,5 @@ class Profile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     last_login_at = models.DateTimeField("Last connexion", null=True, blank=True)
 
-
     def __str__(self):
         return self.user.username
