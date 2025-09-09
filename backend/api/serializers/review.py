@@ -10,9 +10,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     reviewed_profile = ProfileSerializer(read_only=True)
     transaction = TransactionSerializer(read_only=True)
     transaction_id = serializers.PrimaryKeyRelatedField(
-        queryset=Transaction.objects.all(), 
-        source='transaction',
-        write_only=True
+        queryset=Transaction.objects.all(), source="transaction", write_only=True
     )
 
     class Meta:

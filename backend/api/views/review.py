@@ -13,7 +13,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
     filterset_class = ReviewFilter
     filter_backends = [DjangoFilterBackend]
 
-
     def perform_create(self, serializer):
         reviewer_profile = self.request.user.profile
         transaction = serializer.validated_data["transaction"]

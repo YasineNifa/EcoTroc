@@ -3,6 +3,8 @@ from asgiref.sync import async_to_sync
 
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
+
+# from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 
 from api.models import Profile, Message, Notification, Proposition
@@ -57,3 +59,7 @@ def create_proposition_notificaton(sender, instance, created, **kwargs):
             f"notifications_{instance.listing.owner.user.id}",
             {"type": "send_notification", "notification": serialized_notification},
         )
+
+
+# @receiver(user_logged_in)
+# def update_last_login_on_user_login(sender, user, request, **kwargs):

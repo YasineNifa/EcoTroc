@@ -28,21 +28,25 @@ class ListingSerializer(serializers.ModelSerializer):
         source="get_condition_display", read_only=True
     )
     category_id = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), source='category', write_only=True, allow_null=True
+        queryset=Category.objects.all(),
+        source="category",
+        write_only=True,
+        allow_null=True,
     )
     category_display = serializers.CharField(source="category.name", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     images = ListingImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
         child=serializers.ImageField(allow_empty_file=False, use_url=False),
-        write_only=True
+        write_only=True,
     )
-    brand = BrandRelatedField(queryset=Brand.objects.all(), allow_null=True, required=False)
+    brand = BrandRelatedField(
+        queryset=Brand.objects.all(), allow_null=True, required=False
+    )
     # brand_id = serializers.PrimaryKeyRelatedField(
     #     queryset=Brand.objects.all(), source='brand', write_only=True, allow_null=True
     # )
     # brand = BrandSerializer(read_only=True)
-
 
     class Meta:
         model = Listing
