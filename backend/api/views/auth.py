@@ -1,11 +1,29 @@
-from rest_framework import status
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.views import APIView
 
+from api.models import Profile
+
+
+def update_user_last_login(user):
+    try:
+        profile = user.profile
+        profile.last_login_at = timezone.now()
+        profile.save(update_fields=["last_login_at"])
+        print(f"--- LOGIQUE DE CONNEXION EXÉCUTÉE pour {user.username} ---")
+    except Profile.DoesNotExist:
+        print(f"--- ATTENTION : Pas de profil trouvé pour {user.username} ---")
+
 
 class CookieTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            raise e
+
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200:
             access_token = response.data.pop("access")
@@ -16,6 +34,9 @@ class CookieTokenObtainPairView(TokenObtainPairView):
             response.set_cookie(
                 "refresh_token", refresh_token, httponly=True, samesite="Lax"
             )
+            user = serializer.user
+            update_user_last_login(user)
+
         return response
 
 
