@@ -790,3 +790,20 @@ Volumes: I used a volume for the PostgreSQL database (- 'postgres_data:/var/lib/
 # Walk me through your Dockerfile. docker-compose.yaml, ...
 
 # docker exec -it ecotroc_db_1 psql -d ecocroc_db -U ecocroc_user
+
+# Redemarrer docker: sudo systemctl restart docker
+# Nettoyer  docker system prune -a
+Ce que docker system prune -a SUPPRIME :
+- Tous les conteneurs qui sont à l'arrêt (stopped) : C'est le point le plus critique. Si vous avez des données sauvegardées à l'intérieur d'un conteneur qui est arrêté (par exemple, une base de données de test), ces données seront définitivement perdues.
+
+- Toutes les images qui ne sont pas utilisées par au moins un conteneur (même arrêté) : Le -a est pour --all. Cela supprime toutes les images que vous avez téléchargées ou construites mais qui ne sont pas actuellement utilisées.
+
+- Tous les réseaux qui ne sont pas utilisés.
+
+- Tout le cache de build.
+
+Ce que docker system prune -a NE SUPPRIME PAS :
+- Les volumes Docker (volumes) : C'est le point le plus important pour la persistance des données. Les volumes sont conçus pour stocker les données de vos applications (comme les bases de données, les fichiers uploadés, etc.) en dehors des conteneurs. Cette commande n'y touche pas.
+
+- Les conteneurs qui sont en cours d'exécution (running).
+
