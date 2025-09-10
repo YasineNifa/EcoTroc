@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Modal from "../ui/Modal";
 import Button from "../ui/Button";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import getCommonOptions from "../../helpers/axios/getCommonOptions";
 import Token from "../ui/Token";
+import apiClient from "../../services/api";
 
 // --- "Make an Offer" Modal ---
 const MakeOfferModal = ({ isOpen, onClose, item }) => {
@@ -34,7 +34,7 @@ const MakeOfferModal = ({ isOpen, onClose, item }) => {
         offer_amount: Number(offerPrice),
       };
       onClose();
-      const response = await axios.post(
+      const response = await apiClient.post(
         `http://localhost:8000/api/listings/${item.id}/make_offer/`,
         values,
         getCommonOptions()
@@ -53,7 +53,7 @@ const MakeOfferModal = ({ isOpen, onClose, item }) => {
     <Modal isOpen={isOpen} onClose={onClose} title="Faire une offre">
       <div className="flex items-center gap-4 border-b pb-4">
         <img
-          src={item?.image}
+          src={item?.images[0].image}
           alt={item?.title}
           className="w-16 h-16 rounded-md"
         />
