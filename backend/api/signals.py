@@ -52,6 +52,9 @@ def create_proposition_notificaton(sender, instance, created, **kwargs):
     if created:
         notification = Notification.objects.create(
             recipient=instance.listing.owner,
+            message=f"You have a new proposition from {instance.buyer.user.username} regarding '{instance.listing.title}'.",
+            notification_type=Notification.NotificationType.NEW_PROPOSITION,
+            content_object=instance,
         )
         serialized_notification = NotificationSerializer(notification).data
         channel_layer = get_channel_layer()
