@@ -36,7 +36,7 @@ class ListingUserView(generics.ListAPIView):
 class ListingViewSet(viewsets.ModelViewSet):
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
-    permissions_class = [permissions.IsAuthenticatedOrReadOnly]
+    permissions_class = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_class = ListingFilter
 
