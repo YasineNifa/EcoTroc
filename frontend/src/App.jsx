@@ -36,6 +36,10 @@ function App() {
               element={<MessagesPage />}
             />
             <Route path="/transactions" element={<TransactionsPage />} />
+            <Route
+              path="/transactions/:transactionId"
+              element={<TransactionsPage />}
+            />
           </Route>
         </Route>
       </Routes>
