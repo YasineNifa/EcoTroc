@@ -4,8 +4,10 @@ import { AuthContext } from "../../context/AuthContextProvider";
 import useRequestResource from "../../hooks/useRequestResource";
 import apiClient from "../../services/api";
 import getCommonOptions from "../../helpers/axios/getCommonOptions";
+import { useNavigate } from "react-router-dom";
 
 function ConversationList({ activeConversationId, setActiveConversationId }) {
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const { getResourceList, resourceList, updateResource } = useRequestResource({
     endpoint: "conversations",
@@ -21,6 +23,7 @@ function ConversationList({ activeConversationId, setActiveConversationId }) {
       .post(`/conversations/${convo.id}/mark_as_read/`, getCommonOptions())
       .then(() => {
         updateResource(convo.id, { has_unread_messages: false });
+        navigate(`/messages/${convo.id}`);
       })
       .catch((err) => {
         console.error("Error marking conversation as read:", err);
