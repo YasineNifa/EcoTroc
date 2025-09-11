@@ -68,7 +68,7 @@ const NotificationBell = () => {
         }
         break;
       case "NEW_TRANSACTION":
-        path = `/transactions`;
+        path = `/transactions/${notification.content_object.id}`;
         break;
       case "NEW_PROPOSITION":
       case "PROPOSITION_ACCEPTED":
