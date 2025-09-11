@@ -12,6 +12,7 @@ class Notification(models.Model):
         PROPOSITION_ACCEPTED = "PROPOSITION_ACCEPTED", "Proposition Accepted"
         PROPOSITION_REJECTED = "PROPOSITION_REJECTED", "Proposition Rejected"
         NEW_REVIEW = "NEW_REVIEW", "New Review"
+        NEW_TRANSACTION = "NEW_TRANSACTION", "New Transaction"
 
     recipient = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name="notifications"
