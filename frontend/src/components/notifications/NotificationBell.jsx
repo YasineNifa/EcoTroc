@@ -43,20 +43,12 @@ const NotificationBell = () => {
 
   const handleNotificationClick = (notification) => {
     if (!notification.is_read) {
-      // This requires a backend endpoint: POST /api/notifications/{id}/mark_as_read/
       apiClient
         .post(
           `/notifications/${notification.id}/mark_as_read/`,
           getCommonOptions()
         )
         .then(() => {
-          // Update the state optimistically for instant UI feedback
-          // setNotifications((prev) =>
-          //   prev.map((n) =>
-          //     n.id === notification.id ? { ...n, is_read: true } : n
-          //   )
-          // );
-          // setUnreadCount((prev) => prev - 1);
           setAllNotifications((prev) =>
             prev.map((n) =>
               n.id === notification.id ? { ...n, is_read: true } : n
@@ -75,15 +67,16 @@ const NotificationBell = () => {
           path = `/messages/${notification.content_object.conversation}`;
         }
         break;
+      case "NEW_TRANSACTION":
+        path = `/transactions`;
+        break;
       case "NEW_PROPOSITION":
       case "PROPOSITION_ACCEPTED":
       case "PROPOSITION_REJECTED":
         if (notification.content_object?.listing) {
-          // Navigate to the listing detail page for proposition-related notifications
           path = `/listings/${notification.content_object.listing}`;
         }
         break;
-      // Add more cases for other notification types like NEW_REVIEW
       default:
         break;
     }
