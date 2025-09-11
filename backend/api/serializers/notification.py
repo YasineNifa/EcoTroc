@@ -1,11 +1,9 @@
 from rest_framework import serializers
+
 from api.models.notification import Notification
 from api.models.message import Message
 from api.models.proposition import Proposition
-
-# --- Serializers for the related objects ---
-# These will be used by the GenericRelatedField below.
-# They define what data is shown for the object linked to the notification.
+from api.models.transaction import Transaction
 
 
 class NotificationMessageSerializer(serializers.ModelSerializer):
@@ -19,9 +17,10 @@ class NotificationPropositionSerializer(serializers.ModelSerializer):
         model = Proposition
         fields = ["id", "listing", "status"]
 
-
-# --- The Main Notification Serializer ---
-
+class NotificationTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ["id", "listing", "status"]
 
 class NotificationSerializer(serializers.ModelSerializer):
     # This field will dynamically serialize the related object (Message, Proposition, etc.)
@@ -37,9 +36,9 @@ class NotificationSerializer(serializers.ModelSerializer):
             "notification_type",
             "is_read",
             "created_at",
-            "content_object",  # The nested object data
+            "content_object",
         ]
-        read_only_fields = fields  # Notifications are read-only from the API
+        read_only_fields = fields
 
     def get_content_object(self, obj):
         """
@@ -49,5 +48,6 @@ class NotificationSerializer(serializers.ModelSerializer):
             return NotificationMessageSerializer(obj.content_object).data
         if isinstance(obj.content_object, Proposition):
             return NotificationPropositionSerializer(obj.content_object).data
-        # Add more conditions here for other types like Review
+        if isinstance(obj.content_object, Transaction):
+            return NotificationTransactionSerializer(obj.content_object).data
         return None
