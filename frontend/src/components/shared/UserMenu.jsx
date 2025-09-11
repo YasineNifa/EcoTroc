@@ -45,11 +45,9 @@ const UserMenu = () => {
       <Link to="/messages" className="text-gray-600 hover:text-teal-600">
         <MessageIcon />
       </Link>
-      <a href="#" className="text-gray-600 hover:text-teal-600">
-        <Icon>
+      <Icon className="text-gray-600">
           <NotificationBell />
         </Icon>
-      </a>
       <div
         className="flex items-center space-x-2 cursor-pointer"
         onClick={() => setDropdownOpen(!isDropdownOpen)}
