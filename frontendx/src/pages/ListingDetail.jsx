@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import apiClient from "../services/api"; // Your centralized Axios client
 import { AuthContext } from "../context/AuthContextProvider";
-import axios from "axios";
 import getCommonOptions from "../helpers/axios/gtCommonOptions";
 import { useSnackbar } from "notistack";
 import formatHttpApiError from "../helpers/formatHttpApiError";
@@ -45,7 +44,7 @@ const ListingDetail = () => {
 
   const handleInterestedClick = async (e) => {
     e.preventDefault();
-    const response = await axios.post(
+    const response = await apiClient.post(
       `http://localhost:8000/api/listings/${listing.id}/contact_seller/`,
       {},
       getCommonOptions()
@@ -56,7 +55,7 @@ const ListingDetail = () => {
 
   const handleReserveClick = async (e) => {
     e.preventDefault();
-    axios
+    apiClient
       .post(
         `http://localhost:8000/api/listings/${listing.id}/reserve/`,
         {},

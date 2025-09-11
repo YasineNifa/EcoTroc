@@ -2,10 +2,9 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContextProvider";
 import { useSnackbar } from "notistack";
-
-import axios from "axios";
 import getCommonOptions from "../helpers/axios/gtCommonOptions";
 import formatHttpApiError from "../helpers/formatHttpApiError";
+import apiClient from "../services/api";
 
 const ListingCard = ({ listing }) => {
   const navigate = useNavigate();
@@ -17,7 +16,7 @@ const ListingCard = ({ listing }) => {
 
   const handleInterestedClick = async (e) => {
     e.preventDefault();
-    const response = await axios.post(
+    const response = await apiClient.post(
       `http://localhost:8000/api/listings/${listing.id}/contact_seller/`,
       {},
       getCommonOptions()
@@ -28,7 +27,7 @@ const ListingCard = ({ listing }) => {
 
   const handleReserveClick = async (e) => {
     e.preventDefault();
-    axios
+    apiClient
       .post(
         `http://localhost:8000/api/listings/${listing.id}/reserve/`,
         {},
