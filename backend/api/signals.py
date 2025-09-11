@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 # from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 
-from api.models import Profile, Message, Notification, Proposition
+from api.models import Profile, Message, Notification, Proposition, Transaction
 from api.serializers import NotificationSerializer
 
 
@@ -64,5 +64,18 @@ def create_proposition_notificaton(sender, instance, created, **kwargs):
         )
 
 
-# @receiver(user_logged_in)
-# def update_last_login_on_user_login(sender, user, request, **kwargs):
+@receiver(post_save, sender=Transaction)
+def create_transaction_notification(sender, instance, created, **kwargs):
+    if created:
+        notification = Notification.objects.create(
+            recipient=instance.listing.owner,
+            message=f"Someone reserved your '{instance.listing.title}'",
+            notification_type=Notification.NotificationType.NEW_TRANSACTION,
+            content_object=instance,
+        )
+        serialized_notification = NotificationSerializer(notification).data
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"notifications_{instance.listing.owner.user.id}",
+            {"type": "send_notification", "notification": serialized_notification},
+        )
