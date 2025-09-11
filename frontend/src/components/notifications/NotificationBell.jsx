@@ -12,8 +12,7 @@ const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { generalNotifications, unreadGeneralCount, setAllNotifications } =
-    useNotificationSocket();
+  const { unreadGeneralCount, setAllNotifications } = useNotificationSocket();
 
   const fetchNotifications = () => {
     if (!isAuthenticated) return;
@@ -31,8 +30,8 @@ const NotificationBell = () => {
       "ws://" + window.location.host + "/ws/notifications/"
     );
 
-    socket.onmessage = (event) => {
-      // When a new notification comes in, refetch the whole list to get all data
+    socket.onmessage = () => {
+      //event arg
       fetchNotifications();
     };
 
