@@ -35,7 +35,7 @@ const MakeOfferModal = ({ isOpen, onClose, item }) => {
       };
       onClose();
       const response = await apiClient.post(
-        `http://localhost:8000/api/listings/${item.id}/make_offer/`,
+        `listings/${item.id}/make_offer/`,
         values,
         getCommonOptions()
       );

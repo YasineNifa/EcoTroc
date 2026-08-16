@@ -18,8 +18,8 @@ const BioGeneratorModal = ({ isOpen, onClose, onBioGenerated }) => {
     const prompt = `Write a friendly and engaging marketplace bio for a seller who describes themselves with these keywords: "${keywords}". The bio should be short, welcoming, and encourage people to check out their items.`;
 
     try {
-      const apiKey = ""; // Canvas provides the key
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-2.5-flash"}:generateContent?key=${apiKey}`;
       const payload = { contents: [{ parts: [{ text: prompt }] }] };
       const response = await fetch(apiUrl, {
         method: "POST",

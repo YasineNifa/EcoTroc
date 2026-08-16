@@ -12,8 +12,8 @@ const ReviewsTab = ({ reviews }) => {
     const allComments = reviews.map((r) => r.comment).join("\n");
     const prompt = `Summarize the following marketplace reviews for a seller. Highlight the key positive points and any recurring themes. The summary should be concise and encouraging. Reviews:\n\n${allComments}`;
     try {
-      const apiKey = ""; // Canvas provides the key
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-2.5-flash"}:generateContent?key=${apiKey}`;
       const payload = { contents: [{ parts: [{ text: prompt }] }] };
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -34,8 +34,8 @@ const ReviewsTab = ({ reviews }) => {
     setReplyLoading(reviewId);
     const prompt = `A seller received the following review: "${comment}". Write a short, polite, and friendly reply to thank the buyer.`;
     try {
-      const apiKey = ""; // Canvas provides the key
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-2.5-flash"}:generateContent?key=${apiKey}`;
       const payload = { contents: [{ parts: [{ text: prompt }] }] };
       const response = await fetch(apiUrl, {
         method: "POST",

@@ -23,14 +23,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-7kfm9x821491h840w3nd$+&g8@90o*^%#n%z5nify-l!a5y5gu"
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-7kfm9x821491h840w3nd$+&g8@90o*^%#n%z5nify-l!a5y5gu",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# DEBUG = False
+DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in ("true", "1", "yes")
 
 
-ALLOWED_HOSTS = ["*"]
+def _env_list(name, default):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return [host.strip() for host in value.split(",") if host.strip()]
+
+
+ALLOWED_HOSTS = _env_list("DJANGO_ALLOWED_HOSTS", ["*"])
 
 
 # Application definition
@@ -55,24 +64,15 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = "config.asgi.application"
 
 # Configure the channel layer to use Redis
+REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379")
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],
+            "hosts": [REDIS_URL],
         },
     },
 }
-# In Production
-# REDIS_URL = os.environ.get('REDIS_URL', 'redis://redis:6379')
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [REDIS_URL],
-#         },
-#     },
-# }
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -85,12 +85,18 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOWED_ORIGINS = _env_list(
+    "CORS_ALLOWED_ORIGINS",
+    [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://eco-troc.vercel.app",
+    ],
+)
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ["https://eco-troc.vercel.app"]
+CSRF_TRUSTED_ORIGINS = _env_list(
+    "CSRF_TRUSTED_ORIGINS", ["https://eco-troc.vercel.app"]
+)
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
@@ -133,24 +139,21 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get("POSTGRES_DB"),
-        "USER": os.environ.get("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("POSTGRES_HOSTNAME"),
-        "PORT": os.environ.get("POSTGRES_PORT"),
-        "OPTIONS": {},
+DATABASES = (
+    {"default": dj_database_url.config(conn_max_age=600)}
+    if os.environ.get("DATABASE_URL")
+    else {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": os.environ.get("POSTGRES_DB"),
+            "USER": os.environ.get("POSTGRES_USER"),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+            "HOST": os.environ.get("POSTGRES_HOSTNAME"),
+            "PORT": os.environ.get("POSTGRES_PORT"),
+            "OPTIONS": {},
+        }
     }
-}
-# In Production
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=f"postgresql://{os.environ.get('POSTGRES_USER')}:{os.environ.get('POSTGRES_PASSWORD')}@{os.environ.get('POSTGRES_HOSTNAME')}:{os.environ.get('POSTGRES_PORT')}/{os.environ.get('POSTGRES_DB')}",
-#         conn_max_age=600
-#     )
-# }
+)
 
 
 # Password validation

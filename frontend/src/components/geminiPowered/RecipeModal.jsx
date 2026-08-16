@@ -16,8 +16,8 @@ const RecipeModal = ({ isOpen, onClose, itemTitle }) => {
     const prompt = `You are a creative chef. Give me a simple and delicious recipe idea for "${itemTitle}". The recipe should be easy to follow for a beginner. Format it nicely with a title, ingredients list, and steps.`;
 
     try {
-      const apiKey = ""; // Canvas will provide the key
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-2.5-flash"}:generateContent?key=${apiKey}`;
 
       const payload = {
         contents: [{ parts: [{ text: prompt }] }],

@@ -10,8 +10,8 @@ const MoreFromSeller = ({ items, sellerUsername, currentListing }) => {
     setSimilarItems([]);
     const prompt = `Based on the item "${currentListing.title}" (Brand: ${currentListing.brand}, Color: ${currentListing.color}), generate a list of 4 similar but distinct fictional items. For each item, provide an "id", a short "title", and a "brand". Return this as a JSON array.`;
     try {
-      const apiKey = ""; // Canvas provides the key
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-2.5-flash"}:generateContent?key=${apiKey}`;
       const payload = {
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: "application/json" },

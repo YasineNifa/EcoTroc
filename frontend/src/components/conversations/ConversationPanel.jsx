@@ -36,8 +36,8 @@ const ConversationPanel = ({ conversationId }) => {
       .join("\n");
     const prompt = `Summarize the following conversation concisely:\n\n${conversationText}`;
     try {
-      const apiKey = "";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-2.5-flash"}:generateContent?key=${apiKey}`;
       const payload = { contents: [{ parts: [{ text: prompt }] }] };
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -66,8 +66,8 @@ const ConversationPanel = ({ conversationId }) => {
     }
     const prompt = `Based on the last message in a conversation, suggest three short, distinct, and relevant replies. The last message is: "${lastMessage.text}". Return a JSON array of 3 strings.`;
     try {
-      const apiKey = ""; // Canvas provides the key
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-2.5-flash"}:generateContent?key=${apiKey}`;
       const payload = {
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: "application/json" },

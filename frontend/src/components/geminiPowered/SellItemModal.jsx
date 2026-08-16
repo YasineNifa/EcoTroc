@@ -35,8 +35,8 @@ const SellItemModal = ({ isOpen, onClose }) => {
       "Analyze this image of an item for a marketplace. Provide a short, catchy title, a detailed description (mentioning potential material, style, and condition), and a suggested price in the platform's virtual currency, 'Jetons'. Return the response as a JSON object with keys: 'title', 'description', and 'price'.";
 
     try {
-      const apiKey = ""; // Canvas will provide the key
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-2.5-flash"}:generateContent?key=${apiKey}`;
 
       const payload = {
         contents: [

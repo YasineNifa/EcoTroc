@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "backend/Dockerfile"
+buildContext = "backend"
+
+[deploy]
+startCommand = "sh start.sh"
+restartPolicyType = "ON_FAILURE"
+healthcheckPath = "/api/countries/"
+healthcheckTimeout = 300
