@@ -6,11 +6,24 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+def _get_cookie(scope, name):
+    for header, value in scope.get("headers", []):
+        if header == b"cookie":
+            for part in value.decode().split(";"):
+                key, _, val = part.strip().partition("=")
+                if key == name:
+                    return val
+    return None
+
+
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         user = self.scope["user"]
         if user.is_anonymous:
-            access_token = self.scope.get("cookies", {}).get("access_token")
+            access_token = (
+                self.scope.get("cookies", {}).get("access_token")
+                or _get_cookie(self.scope, "access_token")
+            )
             if access_token:
                 try:
                     token = AccessToken(access_token)
