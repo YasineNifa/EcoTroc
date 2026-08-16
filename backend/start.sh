@@ -13,6 +13,12 @@ python manage.py migrate
 echo "Ensuring demo user exists..."
 python manage.py create_demo_user
 
+# Seed sample data so the marketplace is not empty (idempotent).
+echo "Seeding sample categories and brands..."
+python manage.py populate_category
+python manage.py populate_brands
+python manage.py populate_listings
+
 # Start the Daphne ASGI server.
 # Daphne is the official production server for Django Channels.
 # -b 0.0.0.0: Binds to all network interfaces, which is required in a container.
