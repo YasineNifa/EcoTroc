@@ -16,9 +16,8 @@ export const useNotificationSocket = () => {
     });
 
     // 2. Open a single WebSocket connection
-    const socket = new WebSocket(
-      "ws://" + window.location.host + "/ws/notifications/"
-    );
+    const wsBase = import.meta.env.VITE_WS_URL || "wss://ecotroc-backend.onrender.com";
+    const socket = new WebSocket(wsBase + "/ws/notifications/");
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);

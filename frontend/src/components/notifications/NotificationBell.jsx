@@ -26,9 +26,8 @@ const NotificationBell = () => {
     if (!isAuthenticated) return;
 
     fetchNotifications();
-    const socket = new WebSocket(
-      "ws://" + window.location.host + "/ws/notifications/"
-    );
+    const wsBase = import.meta.env.VITE_WS_URL || "wss://ecotroc-backend.onrender.com";
+    const socket = new WebSocket(wsBase + "/ws/notifications/");
 
     socket.onmessage = () => {
       //event arg
