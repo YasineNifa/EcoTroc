@@ -1,6 +1,7 @@
 import random
 from django.core.management.base import BaseCommand
-from api.models import Listing, Profile, Category
+from django.utils.text import slugify
+from api.models import Listing, Profile, Category, Brand
 
 
 class Command(BaseCommand):
@@ -113,6 +114,9 @@ class Command(BaseCommand):
 
         created_count = 0
         for data in listings_data:
+            brand, _ = Brand.objects.get_or_create(
+                slug=slugify(data["brand"]), defaults={"name": data["brand"]}
+            )
             # Use get_or_create to avoid duplicates if the command is run again
             _, created = Listing.objects.get_or_create(
                 title=data["title"],
@@ -121,7 +125,7 @@ class Command(BaseCommand):
                     "token_value": data["token_value"],
                     "owner": random.choice(profiles),
                     "category": random.choice(categories),
-                    "brand": data["brand"],
+                    "brand": brand,
                     "size": data["size"],
                     "condition": data["condition"],
                     # You can add a placeholder image path if needed
