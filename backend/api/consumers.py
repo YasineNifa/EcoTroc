@@ -1,14 +1,28 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from rest_framework_simplejwt.tokens import AccessToken
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        if self.scope["user"].is_anonymous:
+        user = self.scope["user"]
+        if user.is_anonymous:
+            access_token = self.scope.get("cookies", {}).get("access_token")
+            if access_token:
+                try:
+                    token = AccessToken(access_token)
+                    user = await User.objects.aget(id=token["user_id"])
+                except Exception:
+                    user = None
+
+        if user is None or user.is_anonymous:
             await self.close()
         else:
             # Each user gets their own private "room" or group
-            self.room_group_name = f'notifications_{self.scope["user"].id}'
+            self.room_group_name = f"notifications_{user.id}"
 
             # Join the room
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
