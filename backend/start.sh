@@ -9,6 +9,10 @@ set -e
 echo "Applying database migrations..."
 python manage.py migrate
 
+# Ensure the demo account exists (credentials come from env vars).
+echo "Ensuring demo user exists..."
+python manage.py create_demo_user
+
 # Start the Daphne ASGI server.
 # Daphne is the official production server for Django Channels.
 # -b 0.0.0.0: Binds to all network interfaces, which is required in a container.
