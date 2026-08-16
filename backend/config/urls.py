@@ -19,9 +19,25 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
+
+
+def home(request):
+    return JsonResponse({
+        "name": "EcoTroc API",
+        "message": "Welcome to the EcoTroc marketplace backend.",
+        "endpoints": {
+            "auth_login": "/api/token/",
+            "countries": "/api/countries/",
+            "listings": "/api/listings/",
+        },
+        "docs": "/admin/",
+    })
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", home, name="home"),
     # path("api/auth/", include("djoser.urls")),
     # path("api/auth/", include("djoser.urls.authtoken")),
     path("api/", include("api.urls")),
