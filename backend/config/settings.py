@@ -63,16 +63,23 @@ INSTALLED_APPS = [
 
 ASGI_APPLICATION = "config.asgi.application"
 
-# Configure the channel layer to use Redis
-REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379")
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [REDIS_URL],
+# Configure the channel layer to use Redis when available,
+# falling back to the in-memory layer (single-instance) otherwise.
+if os.environ.get("REDIS_URL"):
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [os.environ["REDIS_URL"]],
+            },
         },
-    },
-}
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
